@@ -295,6 +295,12 @@
       "skillPath": "skills/lead-magnets/SKILL.md",
       "computedHash": "1956a2253be6ce5f59361d4af7757eb230d92835bff1dd4f7b19af2a1dac89bd"
     },
+    "magic-ui": {
+      "source": "magicuidesign/magicui",
+      "sourceType": "github",
+      "skillPath": "skills/magic-ui/SKILL.md",
+      "computedHash": "751895d50c76490c6f92a68cdbe61100bd96b4963d1e91e37b5d82c8df0fc2d7"
+    },
     "marketing-council": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
