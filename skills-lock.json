@@ -49,6 +49,12 @@
       "skillPath": "skills/attribution/SKILL.md",
       "computedHash": "a98abe1cd89ef10eef6acb30f0d4db9158cb449dde59bf0b82e715b3f27038d4"
     },
+    "backend-patterns": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "skillPath": "skills/backend-patterns/SKILL.md",
+      "computedHash": "1080fcdc65786651e1d2bad3fb7f3d2d1c28ebcc2f0daebde0d6aa7da5240f60"
+    },
     "brainstorming": {
       "source": "obra/superpowers",
       "sourceType": "github",
@@ -73,6 +79,12 @@
       "skillPath": "skills/ci-cd-and-automation/SKILL.md",
       "computedHash": "578b098a7d2352ccdac8b8abdc40eb6803538e81cf8382f138da6188a655087c"
     },
+    "clickhouse-io": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "skillPath": "skills/clickhouse-io/SKILL.md",
+      "computedHash": "dc01575a26008304b60e71c06dceafcc7eefd6e9cb74033bfff2fcbd1c245815"
+    },
     "co-marketing": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
@@ -90,6 +102,12 @@
       "sourceType": "github",
       "skillPath": "skills/code-simplification/SKILL.md",
       "computedHash": "7973e746e8e2ea5004d520da970c15a106824b8d6be1bcff48908aec021f3677"
+    },
+    "coding-standards": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "skillPath": "skills/coding-standards/SKILL.md",
+      "computedHash": "cfd3b584567b581684ecfeaf8bfdbe0518f1924a6287a0d2316e8cb21254c878"
     },
     "cold-email": {
       "source": "coreyhaines31/marketingskills",
@@ -132,6 +150,12 @@
       "sourceType": "github",
       "skillPath": "skills/context-engineering/SKILL.md",
       "computedHash": "807434a4b178635a5539a1da241815ba7228f00b71f8e3ccd529472ce3bcaf80"
+    },
+    "continuous-learning": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "skillPath": "skills/continuous-learning/SKILL.md",
+      "computedHash": "1145edf8a84aa713fa4c404b97bbdb6ac81b87ed7de61f7511daab516a87db95"
     },
     "copy-editing": {
       "source": "coreyhaines31/marketingskills",
@@ -228,6 +252,12 @@
       "sourceType": "github",
       "skillPath": "skills/free-tools/SKILL.md",
       "computedHash": "ab40a39f8b10a0ee423f47005a49defcae4e9b82b4c6e5be1d6c67d7f963973e"
+    },
+    "frontend-patterns": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-patterns/SKILL.md",
+      "computedHash": "d09902e6be25b21c02a9fe04d43cdd399d22033285d983ea5e4a16296b226a27"
     },
     "frontend-ui-engineering": {
       "source": "addyosmani/agent-skills",
@@ -541,6 +571,12 @@
       "skillPath": "skills/spec-driven-development/SKILL.md",
       "computedHash": "90a53ee823e49fd1518a01e6cf64968d4848bce3fc0b0115b1c19b7e5a87a5ca"
     },
+    "strategic-compact": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "skillPath": "skills/strategic-compact/SKILL.md",
+      "computedHash": "f31725d9612483098fb37e2de3d695aa79c6d203985668f8d4f1aef32d6f2864"
+    },
     "subagent-driven-development": {
       "source": "obra/superpowers",
       "sourceType": "github",
@@ -552,6 +588,12 @@
       "sourceType": "github",
       "skillPath": "skills/systematic-debugging/SKILL.md",
       "computedHash": "276fb0aadb002ab930cc2a56de89e16995a2e3e70b33587652bf0a5fb123148d"
+    },
+    "tdd-workflow": {
+      "source": "WorldFlowAI/everything-claude-code",
+      "sourceType": "github",
+      "skillPath": "skills/tdd-workflow/SKILL.md",
+      "computedHash": "fc3274947bea3a5b18a505aeaf06aebc5d6ad459b767e850a2d810d3339577bf"
     },
     "test-driven-development": {
       "source": "obra/superpowers",
