@@ -499,6 +499,12 @@
       "skillPath": "skills/requesting-code-review/SKILL.md",
       "computedHash": "b095ac8c980339436b41de9989328f3f288f2e2a70452df28452bbeb6531d604"
     },
+    "reverse-engineer-anything": {
+      "source": "morluto/rea",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/reverse-engineer-anything/SKILL.md",
+      "computedHash": "fad7ec02228015715b525cdbe1f1b5d2b9a432f01e966d88a2fc6a294d997a0e"
+    },
     "revops": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
