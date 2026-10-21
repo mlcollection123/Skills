@@ -3,8 +3,8 @@
 How it decides (no cloud, no AI model, everything local):
 
 1. Every file gets *evidence tokens* from its name, its folder names, reference codes found in either
-   (e.g. HX-31299), and the text inside it (PDF, Word, Excel, PowerPoint, HTML, JSON, text).
-   Greek and Latin spellings are folded together, so 'Γερακιές', 'Gerakies' and 'Yerakies' are one word.
+   (e.g. RX-48213), and the text inside it (PDF, Word, Excel, PowerPoint, HTML, JSON, text).
+   Greek and Latin spellings are folded together, so 'Ορχιδιά', 'Orchidia' and 'Orchidia' are one word.
 2. Words that only describe a document type ('payment', 'agreement', 'signed') are ignored for linking.
 3. Each file picks its strongest *anchor*: a distinctive token shared with other files, weighted by where
    it was found (file name > folder > text) and how rare it is.
@@ -42,7 +42,7 @@ def rules_path() -> str:
 
 
 def load_ignore() -> set[str]:
-    """Words that must never link files, e.g. your own name. In projects.json: {"ignore": ["marios"]}."""
+    """Words that must never link files, e.g. your own name. In projects.json: {"ignore": ["john"]}."""
     try:
         with open(rules_path(), encoding="utf-8") as fh:
             raw = json.load(fh)
@@ -52,7 +52,7 @@ def load_ignore() -> set[str]:
 
 
 def load_rules() -> dict[str, list[str]]:
-    """Optional user rules: {"Gerakies Plot": ["gerakies", "γερακιές", "plot 458"]}.
+    """Optional user rules: {"Orchidia Plot": ["orchidia", "ορχιδιά", "plot 917"]}.
 
     Any file whose name, folder or text contains one of the aliases is filed under that project.
     """
@@ -503,7 +503,7 @@ def _share_roles(conn, run_id: int) -> None:
 
 
 def _keep_source_subfolders(conn, run_id: int) -> None:
-    """Keep a meaningful folder the user already made inside a project (e.g. 'Altia'), if it holds 3+ files."""
+    """Keep a meaningful folder the user already made inside a project (e.g. 'Acme Ltd'), if it holds 3+ files."""
     pairs = conn.execute(
         "SELECT project, subfolder, COUNT(*) FROM files WHERE run_id=? AND project IS NOT NULL "
         "AND subfolder IS NOT NULL GROUP BY project, subfolder HAVING COUNT(*) >= ?",

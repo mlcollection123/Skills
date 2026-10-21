@@ -1,7 +1,7 @@
 """Language layer for project grouping: Greek/Latin normalisation, tokens, document-role vocabulary.
 
-Everything is canonicalised so that 'Γερακιές', 'Gerakies' and 'Yerakies' become the same key, and
-'HΧ-31299' (Greek capital Chi) matches 'HX-31299' (Latin X).
+Everything is canonicalised so that 'Ορχιδιά', 'Orchidia' and 'Orchidia' become the same key, and
+'RΧ-48213' (Greek capital Chi) matches 'RX-48213' (Latin X).
 """
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ _GREEK = {"α": "a", "β": "v", "γ": "g", "δ": "d", "ε": "e", "ζ": "z", "η"
           "ς": "s", "τ": "t", "υ": "y", "φ": "f", "χ": "ch", "ψ": "ps", "ω": "o"}
 _DIGRAPHS = (("ου", "u"), ("αι", "e"), ("ει", "i"), ("οι", "i"), ("γκ", "g"), ("μπ", "b"),
              ("ντ", "d"), ("γγ", "ng"))
-# Greek capitals that look like Latin letters (used inside mixed-script codes such as 'HΧ-31299')
+# Greek capitals that look like Latin letters (used inside mixed-script codes such as 'RΧ-48213')
 _HOMOGLYPH = {"α": "a", "β": "b", "ε": "e", "ζ": "z", "η": "h", "ι": "i", "κ": "k", "μ": "m", "ν": "n",
               "ο": "o", "ρ": "p", "τ": "t", "υ": "y", "χ": "x"}
 _FOLDS = ((re.compile(r"g(?=[eiy])"), "y"), (re.compile("ph"), "f"), (re.compile("th"), "t"),
@@ -47,15 +47,15 @@ def canon(token: str) -> str:
         t = pat.sub(rep, t)
     t = re.sub(r"[^a-z0-9]", "", t)
     if len(t) >= 7 and t.isalpha():
-        t = t[:6]                     # crude stemming: Γερακιές / Γερακιών / Γερακιά -> same key
+        t = t[:6]                     # crude stemming: Ορχιδιά / Γερακιών / Γερακιά -> same key
     return t
 
 
 # ---------------------------------------------------------------------------------- tokens
 _WORD = re.compile(r"[^\W_]+", re.UNICODE)
 _ALPHA_WORD = re.compile(r"[^\W\d_]{4,}", re.UNICODE)
-_CODE = re.compile(r"(?<![^\W_])([^\W\d_]{1,6})[-_ ]?(\d{3,})(?![^\W_])", re.UNICODE)    # HX-31299, TF401
-_NUMBER = re.compile(r"(?<![^\W_])(\d{5,12})(?![^\W_])")                                       # 31299
+_CODE = re.compile(r"(?<![^\W_])([^\W\d_]{1,6})[-_ ]?(\d{3,})(?![^\W_])", re.UNICODE)    # RX-48213, TF905
+_NUMBER = re.compile(r"(?<![^\W_])(\d{5,12})(?![^\W_])")                                       # 48213
 _CODE_PREFIX_BLOCK = {"img", "dsc", "pxl", "vid", "mvi", "wa", "page", "pg", "no", "nr", "rev", "fig",
                       "tel", "ph", "mob", "fax", "aug", "sep", "oct", "nov", "dec", "jan", "feb", "mar",
                       "apr", "may", "jun", "jul", "screenshot", "scan"}
@@ -70,7 +70,7 @@ def words(s: str) -> list[str]:
 
 
 def codes(s: str) -> set[str]:
-    """Reference codes like 'HX-31299', 'TF401', 'plot 458' -> canonical keys ('hx31299'), plus bare numbers."""
+    """Reference codes like 'RX-48213', 'TF905', 'plot 917' -> canonical keys ('rx48213'), plus bare numbers."""
     out = set()
     for m in _CODE.finditer(s):
         prefix, digits = m.group(1), m.group(2)

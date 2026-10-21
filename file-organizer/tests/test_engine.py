@@ -331,19 +331,19 @@ class ProjectTests(unittest.TestCase):
                 for s, d in conn.execute("SELECT src, dst FROM plan WHERE dst IS NOT NULL")}
 
     def test_spellings_and_scripts_are_one_word(self):
-        keys = {lexicon.canon(w) for w in ("Γερακιές", "Gerakies", "Yerakies", "ΓΕΡΑΚΙΕΣ", "γερακιών")}
+        keys = {lexicon.canon(w) for w in ("Ορχιδιά", "Orchidia", "ORCHIDIA", "ΟΡΧΙΔΙΑ", "ορχιδιών")}
         self.assertEqual(len(keys), 1)
-        self.assertEqual(lexicon.codes("HΧ-31299_Reservation"), lexicon.codes("HX-31299 signed") - {"signed"})
+        self.assertEqual(lexicon.codes("RΧ-48213_Reservation"), lexicon.codes("RX-48213 signed"))
 
     def test_groups_by_name_across_languages_and_drafts(self):
         d = self.src
-        write(f"{d}/Gerakies - site plan.txt", "site plan")
-        write(f"{d}/Gerakies - house drawings.txt", "drawings")
-        write(f"{d}/Γερακιές Πληρωμή 1.txt", "payment")
-        write(f"{d}/Γερακιές Πληρωμή 2.txt", "payment")
-        write(f"{d}/Γερακιές - Τίτλος Ιδιοκτησίας.txt", "title")
-        write(f"{d}/HX-31299 Reservation Agreement.txt", "the reservation of Yerakies plot, Yerakies village")
-        write(f"{d}/HΧ-31299 Reservation Agreement Signed.txt", "")
+        write(f"{d}/Orchidia - site plan.txt", "site plan")
+        write(f"{d}/Orchidia - house drawings.txt", "drawings")
+        write(f"{d}/Ορχιδιά Πληρωμή 1.txt", "payment")
+        write(f"{d}/Ορχιδιά Πληρωμή 2.txt", "payment")
+        write(f"{d}/Ορχιδιά - Τίτλος Ιδιοκτησίας.txt", "title")
+        write(f"{d}/RX-48213 Reservation Agreement.txt", "the reservation of Orchidia plot, Orchidia village")
+        write(f"{d}/RΧ-48213 Reservation Agreement Signed.txt", "")
         # an unrelated project and some loners
         for n in ("Kitchen Renovation quote", "Kitchen Renovation invoice", "Kitchen Renovation photos list"):
             write(f"{d}/{n}.txt", "oak cabinets")
@@ -351,12 +351,12 @@ class ProjectTests(unittest.TestCase):
         write(f"{d}/lunch.txt", "pasta")
         p = self.plan()
         folders = {n: f.split("/")[1] for n, f in p.items() if f.startswith("Projects/")}
-        gerakies = {n for n, proj in folders.items() if proj == folders["Gerakies - site plan.txt"]}
-        self.assertEqual(len(gerakies), 7, folders)                         # Greek + Latin + signed/draft
-        self.assertIn("HΧ-31299 Reservation Agreement Signed.txt", gerakies)
+        orchidia = {n for n, proj in folders.items() if proj == folders["Orchidia - site plan.txt"]}
+        self.assertEqual(len(orchidia), 7, folders)                         # Greek + Latin + signed/draft
+        self.assertIn("RΧ-48213 Reservation Agreement Signed.txt", orchidia)
         kitchen = {n for n, proj in folders.items() if "Kitchen" in n}
         self.assertEqual(len({folders[n] for n in kitchen}), 1)
-        self.assertNotEqual(folders["Kitchen Renovation quote.txt"], folders["Gerakies - site plan.txt"])
+        self.assertNotEqual(folders["Kitchen Renovation quote.txt"], folders["Orchidia - site plan.txt"])
         self.assertNotIn("shopping.txt", folders)                           # unrelated files stay out
         self.assertNotIn("lunch.txt", folders)
 

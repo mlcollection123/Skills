@@ -59,31 +59,31 @@ To build the .exe yourself on a Windows PC, double-click `build_exe.bat`.
 ## Project folders: files that belong together go together
 
 Instead of sorting by file type, the program works out *what a file belongs to* (a property, a client, a job)
-and groups everything about it, for example `Projects\\Gerakies\\Altia\\Drafts`, `...\\Payments & Banking`,
+and groups everything about it, for example `Projects\\Orchidia\\Acme Ltd\\Drafts`, `...\\Payments & Banking`,
 `...\\Design & Drawings`, `...\\Title & Legal`. It decides from four kinds of evidence:
 
-1. **File names**: shared distinctive words and reference codes (`HX-31299`, `plot458`).
-2. **Folder names** you already made (a descriptive folder like `Altia` counts; `Downloads`, `New folder` do not).
+1. **File names**: shared distinctive words and reference codes (`RX-48213`, `plot917`).
+2. **Folder names** you already made (a descriptive folder like `Acme Ltd` counts; `Downloads`, `New folder` do not).
 3. **Text inside** PDF, Word, Excel, PowerPoint, HTML, JSON and text files. A single mention of a known project
    name in a contract is enough to link it.
 4. **Versions of one document**: a signed copy and its draft stay together even if only the draft has readable text.
 
-Greek and Latin spellings are treated as the same word (`Γερακιές`, `Gerakies`, `Yerakies`), and a Greek letter
-that looks like a Latin one inside a code (`HΧ-31299` with a Greek Χ) still matches `HX-31299`.
+Greek and Latin spellings are treated as the same word (`Ορχιδιά`, `Orchidia`, `Orchidia`), and a Greek letter
+that looks like a Latin one inside a code (`RΧ-48213` with a Greek Χ) still matches `RX-48213`.
 
 Inside a project the sub-folder is a **document role** read from the name first, then the text: Contracts &
 Agreements, Payments & Banking, Identity & KYC, Design & Drawings, Title & Legal, Tax & Government,
 Correspondence, Reports & Summaries. A meaningful folder you already had inside the project (3+ files) is
-kept instead (`Altia`). Drafts go in a `Drafts` sub-folder. Files with no evidence stay in the normal type folders.
+kept instead (`Acme Ltd`). Drafts go in a `Drafts` sub-folder. Files with no evidence stay in the normal type folders.
 Every file in the CSV report has `project`, `role` and `why_grouped` columns so you can check each decision.
 
 **Your own rules (optional).** Create `%LOCALAPPDATA%\\FileOrganizer\\projects.json`:
 
 ```json
 {
-  "Gerakies Plot": ["gerakies", "γερακιές", "plot 458"],
+  "Orchidia Plot": ["orchidia", "ορχιδιά", "plot 917"],
   "Kitchen Renovation": ["kitchen", "oak cabinets"],
-  "ignore": ["marios", "leonidou"]
+  "ignore": ["john", "smith"]
 }
 ```
 A file containing any alias goes to that project. Words under `ignore` never link files: put your own name there,
