@@ -10,13 +10,23 @@ CATEGORY_DOCUMENTS = "Documents"
 CATEGORY_GRAPHICS = "Graphics-Visuals"
 CATEGORY_ARCHIVES = "Archives"
 CATEGORY_EXEC = "Executables-System"
+CATEGORY_VIDEOS = "Videos"
 CATEGORY_OTHER = "Other"
+
+# Camera formats. RAW files are kept next to their JPEG twin; videos are dated and filed with their trip.
+RAW_EXTS = {".dng", ".cr2", ".cr3", ".nef", ".arw", ".orf", ".rw2", ".raf", ".raw"}
+VIDEO_EXTS = {".mp4", ".mov", ".m4v", ".avi", ".mkv", ".wmv", ".mts", ".m2ts", ".3gp", ".webm"}
+SIDECAR_EXTS = {".srt", ".lrf", ".lrv", ".thm", ".xmp", ".aae"}       # small files that belong to a photo or video
+PHOTO_EXTS = {".jpg", ".jpeg", ".tif", ".tiff", ".heic", ".heif"} | RAW_EXTS   # formats that can carry EXIF
+MEDIA_EXTS = PHOTO_EXTS | VIDEO_EXTS | SIDECAR_EXTS
 
 CATEGORY_EXTENSIONS = {
     CATEGORY_DOCUMENTS: {".pdf", ".docx", ".doc", ".xlsx", ".xls", ".pptx", ".csv", ".txt", ".md"},
-    CATEGORY_GRAPHICS: {".png", ".jpg", ".jpeg", ".gif", ".svg", ".psd", ".ai", ".eps", ".tiff"},
+    CATEGORY_GRAPHICS: {".png", ".jpg", ".jpeg", ".gif", ".svg", ".psd", ".ai", ".eps", ".tiff", ".tif",
+                        ".heic", ".heif", ".webp", ".bmp"} | RAW_EXTS,
     CATEGORY_ARCHIVES: {".zip", ".rar", ".7z", ".tar", ".gz"},
     CATEGORY_EXEC: {".exe", ".msi", ".dll", ".bat"},
+    CATEGORY_VIDEOS: VIDEO_EXTS,
 }
 EXT_TO_CATEGORY = {ext: cat for cat, exts in CATEGORY_EXTENSIONS.items() for ext in exts}
 
@@ -47,7 +57,7 @@ SKIP_DIR_NAMES = {
 }
 
 # ---- Smart photo folders ---------------------------------------------------------------
-PHOTO_EXTS = {".jpg", ".jpeg", ".tif", ".tiff", ".heic", ".heif"}   # camera formats that carry EXIF
+TRIP_MEDIA_MARGIN_DAYS = 2   # videos and RAW files dated this close to a trip count as part of it
 TRIP_GAP_DAYS = 10        # photos from one country more than this many days apart start a new trip
 MIN_TRIP_PHOTOS = 3       # fewer photos than this in a country: not treated as a trip
 MAX_GEOCODE_KM = 200      # GPS point further than this from any known town: no place name
@@ -56,7 +66,8 @@ MAX_GEOCODE_KM = 200      # GPS point further than this from any known town: no 
 MIN_PROJECT_FILES = 3     # a group needs at least this many files to get its own project folder
 MERGE_RATIO = 0.3         # two anchors are one project when this share of the smaller one co-occurs
 BRIDGE_RATIO = 0.25       # two groups join when 2+ files bridge them and this share of the smaller group does
-ANCHOR_CAP_MIN = 30       # words found in more files than max(this, 1% of all files) are too common
+ANCHOR_CAP_MIN = 150      # words found in more files than max(this, 1% of all files) are too common
+TEXT_ONLY_MIN_FILES = 5   # a word seen only inside documents needs this many files to count
 ANCHOR_CAP_FRAC = 0.01
 
 # ---- Performance knobs -----------------------------------------------------------------

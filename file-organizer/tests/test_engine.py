@@ -436,5 +436,106 @@ class ProjectTests(unittest.TestCase):
         self.assertEqual(snapshot(self.src), before)
 
 
+@unittest.skipUnless(all(photos.available()), "needs: pip install Pillow geonamescache")
+class RealDriveLayoutTests(unittest.TestCase):
+    """A drive like a real one (invented names): project papers, a drone folder with JPEG+RAW+video pairs,
+    and loose documents that belong to nothing."""
+    LIMASSOL = (34.68, 33.04)
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.src, self.dst = os.path.join(self.tmp, "E"), os.path.join(self.tmp, "out")
+        self.db = os.path.join(self.tmp, "index.db")
+        os.environ["FILE_ORGANIZER_HOME"] = os.path.join(self.tmp, "home")
+        self.rep = Reporter(lambda m: None, min_interval=0)
+        d = self.src
+        # project documents, some inside a counterparty folder with drafts
+        for n in ("site plan", "house drawings", "Orchidia title deed", "Orchidia payment 1", "Orchidia payment 2"):
+            write(f"{d}/Orchidia Plot/orchidia {n}.txt", n)
+        write(f"{d}/Orchidia Plot/Acme Ltd/RX-48213 Reservation Agreement Signed.txt", "signed")
+        write(f"{d}/Orchidia Plot/Acme Ltd/ID card.txt", "id")
+        write(f"{d}/Orchidia Plot/Acme Ltd/Draft/RX-48213 Reservation Agreement.txt",
+              "agreement for the Orchidia plot, Orchidia village")
+        write(f"{d}/Orchidia Plot/Acme Ltd/Bank statement.txt", "bank")
+        # a planning application for the same plot, in its own folder
+        for n in ("1_Orchidia zoning section", "2_Orchidia title", "3_Orchidia survey", "4_Orchidia application"):
+            write(f"{d}/Preliminary Query OA8/{n}.txt", n)
+        # drone folder: JPEG with EXIF, RAW twin without, videos and subtitle files
+        for i in range(6):
+            stem = f"DJI_2026092711{20 + i}00_{160 + i:04d}_D"
+            make_photo(f"{d}/Orchidia Drone 27.09.2026/DJI_001/{stem}.JPG", "2026:09:27 11:2%d:00" % i,
+                       self.LIMASSOL, 10 + i)
+            write(f"{d}/Orchidia Drone 27.09.2026/DJI_001/{stem}.DNG", b"not really raw %d" % i)
+        for i in range(3):
+            stem = f"DJI_2026092711{30 + i}00_{170 + i:04d}_D"
+            write(f"{d}/Orchidia Drone 27.09.2026/DJI_001/{stem}.MP4", b"video %d" % i)
+            write(f"{d}/Orchidia Drone 27.09.2026/DJI_001/{stem}.SRT", b"subs %d" % i)
+        # loose, unrelated documents
+        write(f"{d}/John_Smith_Family_Trust_Deed.txt", "trust of John Smith")
+        write(f"{d}/John Smith - passport.txt", "passport")
+        write(f"{d}/Everyday Problem app.txt", "individuals individuals individuals")
+        write(f"{d}/Rental Document.txt", "document document document")
+        write(f"{d}/Book1.txt", "tax tax")
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def plan(self, **opts):
+        opts.setdefault("detect_dups", False)
+        engine.dry_run(self.db, self.src, self.dst, opts, self.rep)
+        conn = db.connect(self.db)
+        return {os.path.basename(s): os.path.relpath(d, self.dst).replace("\\", "/")
+                for s, d in conn.execute("SELECT src, dst FROM plan WHERE dst IS NOT NULL")}
+
+    def test_drive_is_sorted_the_way_a_person_would(self):
+        p = self.plan()
+        projects = {f.split("/")[1] for f in p.values() if f.startswith("Projects/")}
+        self.assertEqual(projects, {"Orchidia"}, p)              # one project, no DJI_ or OA8 fragments
+        self.assertTrue(p["orchidia site plan.txt"].startswith("Projects/Orchidia/Design & Drawings/"), p)
+        # the counterparty folder is kept, drafts inside it stay together
+        self.assertEqual(p["ID card.txt"], "Projects/Orchidia/Acme Ltd/ID card.txt")
+        self.assertEqual(p["RX-48213 Reservation Agreement Signed.txt"],
+                         "Projects/Orchidia/Acme Ltd/RX-48213 Reservation Agreement Signed.txt")
+        self.assertTrue(p["RX-48213 Reservation Agreement.txt"].endswith("Acme Ltd/Drafts/RX-48213 Reservation Agreement.txt"))
+        # the application folder is kept as its own sub-folder of the project
+        self.assertTrue(p["1_Orchidia zoning section.txt"].startswith("Projects/Orchidia/Preliminary Query OA8/"), p)
+
+    def test_drone_folder_joins_the_project_with_raw_and_video_split(self):
+        p = self.plan()
+        jpg = "DJI_202609271120" + "00_0160_D"
+        self.assertEqual(os.path.dirname(p[f"{jpg}.JPG"]), "Projects/Orchidia/Drone 27.09.2026")
+        self.assertEqual(os.path.dirname(p[f"{jpg}.DNG"]), "Projects/Orchidia/Drone 27.09.2026/RAW")
+        mp4 = "DJI_202609271130" + "00_0170_D"
+        self.assertEqual(os.path.dirname(p[f"{mp4}.MP4"]), "Projects/Orchidia/Drone 27.09.2026/Videos")
+        self.assertEqual(os.path.dirname(p[f"{mp4}.SRT"]), "Projects/Orchidia/Drone 27.09.2026/Videos")
+
+    def test_without_a_matching_project_media_form_a_trip_with_raw_and_videos(self):
+        shutil.rmtree(os.path.join(self.src, "Orchidia Plot"))
+        shutil.rmtree(os.path.join(self.src, "Preliminary Query OA8"))
+        p = self.plan()
+        jpg = "DJI_202609271120" + "00_0160_D"
+        base = "Photos/Travel/Cyprus 2026/Orchidia Drone 27.09.2026"
+        self.assertEqual(os.path.dirname(p[f"{jpg}.JPG"]), base)
+        self.assertEqual(os.path.dirname(p[f"{jpg}.DNG"]), base + "/RAW")        # twin of the JPEG
+        self.assertEqual(os.path.dirname(p["DJI_20260927113000_0170_D.MP4"]), base + "/Videos")  # dated by name
+
+    def test_home_country_makes_it_an_event_not_a_trip(self):
+        shutil.rmtree(os.path.join(self.src, "Orchidia Plot"))
+        shutil.rmtree(os.path.join(self.src, "Preliminary Query OA8"))
+        p = self.plan(home_country="CY")
+        self.assertTrue(p["DJI_20260927112000_0160_D.JPG"].startswith("Photos/Events/Orchidia Drone 27.09.2026"), p)
+
+    def test_loose_documents_and_owner_name_do_not_join_the_project(self):
+        p = self.plan()
+        for n in ("Everyday Problem app.txt", "Rental Document.txt", "Book1.txt"):
+            self.assertFalse(p[n].startswith("Projects/"), (n, p[n]))
+        # two files sharing only the owner's name are not a "project"
+        self.assertFalse(p["John Smith - passport.txt"].startswith("Projects/Orchidia"), p)
+
+    def test_camera_timestamps_are_not_reference_codes(self):
+        self.assertEqual(lexicon.codes("DJI_20260927112754_0166_D"), set())
+        self.assertEqual(lexicon.codes("GOPR1234"), set())
+
+
 if __name__ == "__main__":
     unittest.main()

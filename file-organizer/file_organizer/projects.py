@@ -17,13 +17,15 @@ from __future__ import annotations
 import json
 import math
 import os
+import re
 from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor
 
 from . import analyzer, lexicon
 from .common import Reporter
 from .config import (
-    ANCHOR_CAP_FRAC, ANCHOR_CAP_MIN, BRIDGE_RATIO, CATEGORY_DOCUMENTS, MERGE_RATIO, MIN_PROJECT_FILES, app_dir,
+    ANCHOR_CAP_FRAC, ANCHOR_CAP_MIN, BRIDGE_RATIO, CATEGORY_DOCUMENTS, MEDIA_EXTS, MERGE_RATIO,
+    MIN_PROJECT_FILES, TEXT_ONLY_MIN_FILES, app_dir,
 )
 from .db import iter_batches
 
@@ -172,7 +174,7 @@ def _role(name_keys, text_counts, ext) -> str | None:
     if ext in lexicon.CAD_EXTS:
         score["Design & Drawings"] += 5
     if not score or max(score.values()) < 2:
-        return None
+        return lexicon.EXT_ROLE.get(ext)         # a .kmz is a map, a .zip an archive
     top = max(score.values())
     return next(r for r in lexicon.ROLE_PRIORITY if score.get(r) == top)
 
@@ -292,7 +294,7 @@ def discover(conn, run_id: int, n_files: int, rep: Reporter) -> dict:
         "MAX(CASE WHEN t.src < 4 THEN 1 ELSE 0 END) AS strong FROM tokens t "
         "JOIN files f ON f.id = t.file_id WHERE f.run_id=? GROUP BY t.tok "
         "HAVING COUNT(DISTINCT t.file_id) BETWEEN 2 AND ?", (run_id, cap))
-    conn.execute("DELETE FROM temp.anchor WHERE strong=0 AND df<3")     # text-only words need more support
+    conn.execute("DELETE FROM temp.anchor WHERE strong=0 AND df<?", (TEXT_ONLY_MIN_FILES,))   # text-only words need support
     conn.execute("CREATE UNIQUE INDEX temp.anchor_tok ON anchor(tok)")
 
     conn.execute("DROP TABLE IF EXISTS temp.best")
@@ -362,14 +364,16 @@ def discover(conn, run_id: int, n_files: int, rep: Reporter) -> dict:
             cur_fid, roots = fid, set()
         roots.add(uf.find(tok))
     close_roots()
+    family_roots = {uf.find(t) for t in claims if t.startswith("~") or any(ch.isdigit() for ch in t)}
     attach: dict[str, list] = defaultdict(list)
     for (a, b), c in bridge.items():
         small = min(sizes0[a] or 1, sizes0[b] or 1)
         if c >= 2 and c / small >= BRIDGE_RATIO:
             uf.union(a, b)
-        for lone, other in ((a, b), (b, a)):         # a group too small to stand alone (a draft and its
-            if sizes0[lone] < MIN_PROJECT_FILES <= sizes0[other]:   # signed copy) joins the one group it touches
-                attach[lone].append((c, other))
+        for lone, other in ((a, b), (b, a)):         # a document family too small to stand alone (a draft and
+            if sizes0[lone] < MIN_PROJECT_FILES <= sizes0[other] and lone in family_roots:   # its signed copy)
+                attach[lone].append((c, other))      # joins the one group it touches. A lone file with a
+                                                     # generic word in common does not.
     for lone, options in attach.items():
         options.sort(reverse=True)
         if len(options) == 1 or options[0][0] > options[1][0]:
@@ -401,13 +405,15 @@ def discover(conn, run_id: int, n_files: int, rep: Reporter) -> dict:
 
     _share_roles(conn, run_id)
     _keep_source_subfolders(conn, run_id)
+    attached = _attach_media(conn, run_id, set(labels.values()), rep)
     grouped = conn.execute("SELECT COUNT(*) FROM files WHERE run_id=? AND project IS NOT NULL",
                            (run_id,)).fetchone()[0]
     projects = conn.execute(
         "SELECT project, COUNT(*) FROM files WHERE run_id=? AND project IS NOT NULL GROUP BY project "
         "ORDER BY 2 DESC", (run_id,)).fetchall()
     rep.progress("Linking related files", grouped, None, force=True)
-    return {"projects": len(projects), "grouped": grouped, "labels": projects, "ruled": ruled}
+    return {"projects": len(projects), "grouped": grouped, "labels": projects, "ruled": ruled,
+            "media_attached": attached}
 
 
 def _apply_rules(conn, run_id: int) -> int:
@@ -516,3 +522,59 @@ def _keep_source_subfolders(conn, run_id: int) -> None:
         conn.execute("UPDATE files SET subgroup=? WHERE run_id=? AND project=? AND subfolder=?",
                      (sub, run_id, project, sub))
     conn.commit()
+
+
+def _label_keys(label: str) -> set[str]:
+    return {k for k in (lexicon.canon(w) for w in lexicon.words(label)) if _usable(k)}
+
+
+def _attach_media(conn, run_id: int, labels: set[str], rep: Reporter) -> int:
+    """Photos, RAW files and videos whose folder or file name carries a project's name join that project.
+
+    A folder called 'Orchid Drone 27.09.2026' next to the project's documents is project material, so its
+    pictures go to Projects/Orchid/Drone 27.09.2026 instead of a generic trip or date folder.
+    """
+    keymap: dict[str, str] = {}
+    for label in sorted(labels):
+        for k in _label_keys(label):
+            keymap.setdefault(k, label)
+    if not keymap:
+        return 0
+    exts = sorted(MEDIA_EXTS)
+    marks = ",".join("?" * len(exts))
+    sql = (f"SELECT id, path FROM files WHERE run_id=? AND project IS NULL AND cleanup=0 AND "
+           f"(taken IS NOT NULL OR ext IN ({marks})) AND id>? ORDER BY id LIMIT ?")
+    run = conn.execute("SELECT source FROM runs WHERE id=?", (run_id,)).fetchone()[0]
+    n = 0
+    for rows in iter_batches(conn, sql, (run_id, *exts), 2000):
+        rep.check()
+        upd = []
+        for fid, path in rows:
+            rel_dir = os.path.relpath(os.path.dirname(path), run)
+            parts = [] if rel_dir in (".", "") else list(reversed(rel_dir.split(os.sep)))[:4]
+            votes: Counter = Counter()
+            hit = None
+            for depth, text in enumerate([os.path.splitext(os.path.basename(path))[0]] + parts):
+                for k in (lexicon.canon(w) for w in lexicon.words(text)):
+                    if k in keymap:
+                        votes[keymap[k]] += 1
+                        hit = hit or (text if depth else None)
+            if not votes:
+                continue
+            label = votes.most_common(1)[0][0]
+            sub = _remainder(next((p for p in parts if not lexicon.is_generic_folder(p)), None), _label_keys(label))
+            upd.append((label, sub, lexicon.ROLE_MEDIA, f"matched: folder or name carries '{label}'", fid))
+        conn.executemany("UPDATE files SET project=?, subgroup=?, role=?, reason=? WHERE id=?", upd)
+        conn.commit()
+        n += len(upd)
+    return n
+
+
+def _remainder(folder: str | None, label_keys: set[str]) -> str | None:
+    """'Orchid Drone 27.09.2026' minus the project word -> 'Drone 27.09.2026'. None if nothing is left."""
+    if not folder:
+        return None
+    pieces = re.split(r"([^\W_]+)", folder)             # words stay, separators between them stay too
+    kept = [p for p in pieces if not (p and re.fullmatch(r"[^\W_]+", p) and lexicon.canon(p) in label_keys)]
+    text = re.sub(r"\s+", " ", "".join(kept)).strip(" -_.,;:()[]")
+    return text if sum(ch.isalpha() for ch in text) >= 3 else None

@@ -55,8 +55,9 @@ def canon(token: str) -> str:
 _WORD = re.compile(r"[^\W_]+", re.UNICODE)
 _ALPHA_WORD = re.compile(r"[^\W\d_]{4,}", re.UNICODE)
 _CODE = re.compile(r"(?<![^\W_])([^\W\d_]{1,6})[-_ ]?(\d{3,})(?![^\W_])", re.UNICODE)    # RX-48213, TF905
-_NUMBER = re.compile(r"(?<![^\W_])(\d{5,12})(?![^\W_])")                                       # 48213
-_CODE_PREFIX_BLOCK = {"img", "dsc", "pxl", "vid", "mvi", "wa", "page", "pg", "no", "nr", "rev", "fig",
+_NUMBER = re.compile(r"(?<![^\W_])(\d{5,8})(?![^\W_])")                                       # 48213
+_CODE_PREFIX_BLOCK = {"img", "dsc", "dscn", "pxl", "vid", "mvi", "wa", "page", "pg", "no", "nr", "rev", "fig",
+                      "dji", "gopr", "gx", "gh", "cimg", "pano", "burst", "mov", "pic", "sam", "mah",
                       "tel", "ph", "mob", "fax", "aug", "sep", "oct", "nov", "dec", "jan", "feb", "mar",
                       "apr", "may", "jun", "jul", "screenshot", "scan"}
 
@@ -74,10 +75,12 @@ def codes(s: str) -> set[str]:
     out = set()
     for m in _CODE.finditer(s):
         prefix, digits = m.group(1), m.group(2)
-        if strip_accents(prefix.lower()) in _CODE_PREFIX_BLOCK:
-            continue
+        if strip_accents(prefix.lower()) in _CODE_PREFIX_BLOCK or canon(prefix) in GENERIC:
+            continue                       # 'signed 458', 'payment 1234': a word and a number, not a code
         if len(digits) == 4 and digits[:2] in ("19", "20"):
             continue                       # a year, not a code
+        if len(digits) >= 9:
+            continue                       # a timestamp such as 20260927112754, not a reference code
         key = canon(prefix + digits)
         if key:
             out.add(key)
@@ -109,6 +112,10 @@ hereby herein whereas shall thereof thereto section clause article annex schedul
 και του της των την τον το στο στη στον στην με για από σε ως που ότι αυτό πως ένα μία μια ενός κατά
 προς μετά είναι έχει ημερομηνία όνομα διεύθυνση τηλέφωνο αριθμός σύνολο ποσό ευρώ εταιρεία πελάτης
 υπογραφή σελίδα
+dji gopro canon nikon sony fujifilm panasonic iphone android camera drone img dsc pxl vid mvi screenshot
+individual individuals document documents application applications form forms request query problem
+everyday requirements requirement meet exact sample test example general misc other information info
+έγγραφο έγγραφα έντυπο έντυπα αίτηση αιτήσεις ερώτημα
 january february march april may june july august september october november december jan feb mar apr jun
 jul aug sep sept oct nov dec monday tuesday wednesday thursday friday saturday sunday mon tue wed thu fri
 sat sun
@@ -116,7 +123,7 @@ sat sun
 δεκέμβριος ιαν φεβ μαρ απρ ιουν ιουλ αυγ σεπ οκτ νοε δεκ
 """)
 
-DRAFT_WORDS = _keys("draft drafts preliminary πρόχειρο προχειρο προσχέδιο προσχεδιο")
+DRAFT_WORDS = _keys("draft drafts πρόχειρο προχειρο προσχέδιο προσχεδιο")
 STATUS_WORDS = DRAFT_WORDS | _keys("final signed unsigned executed copy copies scan scanned υπογεγραμμένο "
                                    "υπογεγραμμενο υπογεγραμμένη")
 
@@ -153,6 +160,10 @@ ROLE_PRIORITY = list(ROLES)
 GENERIC = STOP | STATUS_WORDS | frozenset(ROLE_KEYS)
 
 CAD_EXTS = {".dwg", ".dxf", ".skp", ".rvt", ".ifc", ".3dm"}
+ROLE_MEDIA = "Photos & Video"
+EXT_ROLE = {".kmz": "Maps & Surveys", ".kml": "Maps & Surveys", ".gpx": "Maps & Surveys", ".shp": "Maps & Surveys",
+            ".geojson": "Maps & Surveys", ".zip": "Archives", ".rar": "Archives", ".7z": "Archives",
+            ".tar": "Archives", ".gz": "Archives"}
 
 # Folder names that say nothing about their content.
 _GENERIC_FOLDER = re.compile(
@@ -160,7 +171,8 @@ _GENERIC_FOLDER = re.compile(
     r"\d{3}[a-z_]*|downloads?|new folder.*|untitled.*|misc|miscellaneous|temp|tmp|backup|backups|old|"
     r"screenshots?|whatsapp.*|desktop|documents?|docs?|my documents|my pictures|sorted|unsorted|all|stuff|"
     r"exports?|exported|files?|data|work|archive|archives|projects?|clients?|others?|general|scans?|"
-    r"pdfs?|folder\d*|copy of .*|\.+)$", re.IGNORECASE)
+    r"pdfs?|folder\d*|copy of .*|dji[_ \-]?\d*|\d{3}(?:gopro|media|canon|nikon|apple|_?pana|msdcf|olymp)|"
+    r"gopro.*|private|avchd|clip|thumbs?|thumbnails?|\.+)$", re.IGNORECASE)
 
 
 def is_generic_folder(name: str) -> bool:

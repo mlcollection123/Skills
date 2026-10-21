@@ -22,16 +22,19 @@ def _clean(name: str, limit: int = 60) -> str:
 def target_subdir(category: str, subcategory: str | None, ext: str, is_dup: bool, segregate: bool,
                   path: str = "", taken: float | None = None, trip: str | None = None,
                   project: str | None = None, role: str | None = None, status: str | None = None,
-                  subgroup: str | None = None) -> str:
+                  subgroup: str | None = None, root: str | None = None) -> str:
     if project:
         parts = ["Projects", _clean(project), _clean(subgroup or role or "Other")]
-        if status == "draft":
+        kind = photos.media_kind(ext) if photos.is_media(category, ext) else None
+        if kind:
+            parts.append(kind)              # RAW/ and Videos/ next to the JPEGs
+        elif status == "draft":
             parts.append("Drafts")
         if is_dup and segregate:
             parts.insert(0, "_Duplicates")
         return os.path.join(*parts)
-    if taken is not None and photos.is_photo(category, ext):
-        rel = photos.photo_subdir(path, taken, trip)
+    if taken is not None and photos.is_media(category, ext):
+        rel = photos.photo_subdir(path, taken, trip, ext, root)
         return os.path.join("_Duplicates", rel) if (is_dup and segregate) else rel
     if category == CATEGORY_DOCUMENTS:
         leaf = subcategory or "General"
@@ -69,6 +72,7 @@ def build_plan(conn, run_id: int, dest: str, include_exec: bool, segregate_dups:
     conn.execute("DELETE FROM plan WHERE run_id=?", (run_id,))
     conn.commit()
     dest_root = os.path.abspath(dest)
+    scan_root = conn.execute("SELECT source FROM runs WHERE id=?", (run_id,)).fetchone()[0]
     total = conn.execute("SELECT COUNT(*) FROM files WHERE run_id=?", (run_id,)).fetchone()[0]
     sql = ("SELECT id, path, ext, size, mtime, category, subcategory, is_dup, taken, trip, "
            "project, role, status, subgroup FROM files "
@@ -88,7 +92,7 @@ def build_plan(conn, run_id: int, dest: str, include_exec: bool, segregate_dups:
             else:
                 rel = target_subdir(cat, sub, ext, bool(is_dup), segregate_dups, path=path,
                                     taken=taken if smart_photos else None, trip=trip,
-                                    project=project, role=role, status=status, subgroup=subgroup)
+                                    project=project, role=role, status=status, subgroup=subgroup, root=scan_root)
                 _insert_unique(conn, run_id, fid, path, dest_root, rel, size, mtime)
                 planned += 1
         conn.commit()
