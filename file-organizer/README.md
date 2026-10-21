@@ -1,0 +1,78 @@
+# File Organizer
+
+A local, private, free desktop tool that indexes a very large folder (built for ~2 TB and 500,000+ files),
+sorts it into a clean structure, and can undo what it did. No network access, no accounts, no telemetry.
+
+## Setup (Windows)
+
+1. Install **Python 3.10 or newer** from python.org. In the installer keep "tcl/tk and IDLE" ticked (that is tkinter).
+2. Open PowerShell in this folder:
+   ```powershell
+   python -m venv .venv
+   .venv\Scripts\activate
+   pip install -r requirements.txt
+   python -m file_organizer
+   ```
+   `requirements.txt` holds one optional package, `pypdf`, used to read text inside searchable PDFs.
+   Without it, PDFs are still sorted by file name. Everything else uses the Python standard library.
+3. For **Symlink** mode only: turn on *Settings > Privacy & security > For developers > Developer Mode*
+   (or run PowerShell as Administrator). Copy and Move need no special rights.
+
+## Your first run: do it on a small folder
+
+1. Pick a **small test folder** (a few hundred files) as Source and an **empty folder on another drive** as Destination.
+2. Press **Run Dry Run**. Nothing is copied, moved or linked. It writes a preview to
+   `%LOCALAPPDATA%\FileOrganizer\reports\` (a CSV you can open in Excel, plus a text summary).
+3. Read the CSV: every file, where it would go, duplicates, and which executables are flagged.
+4. Choose **Copy (keep originals)** and press **Execute Sorting**. Check the result.
+5. Press **Undo Last Run** and confirm the destination is cleaned up and the source is untouched.
+6. Only then point it at the big folder. Keep using **Copy** first; **Move** is the last step, not the first.
+
+## What it does
+
+| Stage | Detail |
+|---|---|
+| Scan | Streams the folder with `os.scandir`, writes rows to SQLite in batches of 5,000. Memory stays flat (about 120 MB for 150,000 files in testing). |
+| Metadata | Extension, size, creation and modification time, MIME type (guessed from the extension). |
+| Categories | Documents, Graphics-Visuals, Archives, Executables-System, Other (rules in `file_organizer/config.py`). |
+| Document keywords | Looks in the file name and, for `.txt .md .csv .pdf .docx .xlsx .pptx`, in the text. Sub-folders: Invoices, Tax, Receipts, Contracts, Projects, else General. A keyword in the name always counts; in the text it must appear twice. |
+| Duplicates | Only files with identical sizes are compared. A first+last 64 KB fingerprint comes next. Only the survivors are read in full (SHA-256 or MD5). The oldest copy is kept in place; extra copies go to `_Duplicates/` (switchable). Hashes are cached, so a second dry run is faster. |
+| Plan | Stored in SQLite and in the CSV. Name clashes get ` (1)`, ` (2)` suffixes. Files are never overwritten. |
+| Execute | **Copy**: copies to a temp name, checks size (and hash if you tick Verify), then renames into place. **Move**: instant rename on the same drive; on another drive, copy, verify, then delete the source. **Symlink**: creates links, originals stay put. |
+| Undo | Every action is written to a journal *before* it happens. Undo reverses the last run, including a cancelled or crashed one. It removes only copies and links, moves files back, and deletes only empty folders it created. |
+
+Output layout: `Destination\Documents\Invoices\...`, `Destination\Graphics-Visuals\PNG\...`,
+`Destination\Archives\ZIP\...`, `Destination\_Duplicates\...`.
+
+## Safety rules built in
+
+- **Dry run is mandatory.** The Execute button stays disabled until a completed dry run exists for the current source and destination.
+- **Stale plan check.** If a file changed or vanished after the dry run, it is skipped, not touched.
+- **Executables and system files (`.exe .msi .dll .bat`) are flagged but left in place by default.** Moving DLLs out of an installed program breaks the program. Tick the option only for downloads you know are loose.
+- **Skipped on purpose:** `.git`, `node_modules`, `Windows`, `Program Files`, `$RECYCLE.BIN`, `System Volume Information`, `AppData`, symlinks and junctions, and OneDrive-style cloud-only placeholders (reading them would download them). Edit `SKIP_DIR_NAMES` in `config.py` to change this.
+- The destination may not be inside the source, or the reverse.
+- Copy mode checks free space first. Symlink mode checks it is allowed before touching anything.
+- A disk-full error or 50 failures in a row stops the run.
+- Cancel stops cleanly between files. A file already being copied finishes first.
+
+## Know the limits
+
+- **Move flattens folder structure.** A project folder moved file by file stops being a project. Use Copy, or exclude project folders.
+- **Time at 2 TB is dominated by your disk.** Scanning reads metadata only (fast). Hashing reads file contents, but only for size-matching candidates. On a spinning disk set Threads to 1 or 2.
+- The database is large: about 1.3 KB per file, so roughly 700 MB for 500,000 files. Old dry runs for the same folders are deleted automatically.
+- MIME type comes from the extension, not from file contents.
+- Moving a file to another drive needs space for the copy until the original is deleted.
+
+## Headless mode (also handy for scripting)
+
+```powershell
+python -m file_organizer dryrun D:\Downloads E:\Sorted
+python -m file_organizer execute D:\Downloads E:\Sorted --mode copy
+python -m file_organizer undo
+```
+
+## Tests
+
+```powershell
+python -m unittest discover -s tests -v
+```

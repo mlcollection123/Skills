@@ -1,0 +1,2 @@
+# Optional: enables text search inside searchable PDFs. Everything else is standard library.
+pypdf>=4.0
