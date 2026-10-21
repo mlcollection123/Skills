@@ -11,6 +11,8 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      contents: write   # needed to publish the Release
     defaults:
       run:
         working-directory: file-organizer
@@ -52,3 +54,15 @@ jobs:
         with:
           name: FileOrganizer-portable
           path: file-organizer/dist-portable/FileOrganizer-portable.exe
+      - name: Publish a Release with direct download links
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "fileorganizer-build-${{ github.run_number }}"
+          Copy-Item installer_out\FileOrganizer-Setup.exe .
+          Copy-Item dist-portable\FileOrganizer-portable.exe .
+          gh release create $tag FileOrganizer-Setup.exe FileOrganizer-portable.exe `
+            --title "File Organizer build ${{ github.run_number }}" `
+            --notes "Windows build of commit ${{ github.sha }}. Download FileOrganizer-Setup.exe to install, or FileOrganizer-portable.exe to run without installing. Windows may show a SmartScreen warning because the program is not code-signed: click More info, then Run anyway." `
+            --target ${{ github.sha }}
