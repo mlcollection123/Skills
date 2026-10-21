@@ -1,0 +1,54 @@
+name: Build File Organizer for Windows
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/agent-skills-install-hsopvx]
+    paths:
+      - "file-organizer/**"
+      - ".github/workflows/build-windows.yml"
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: file-organizer
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r requirements.txt pillow-heif pyinstaller
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+      - name: Build app folder (for the installer)
+        run: >
+          pyinstaller --noconfirm --clean --windowed --name FileOrganizer
+          --collect-data geonamescache --collect-all pillow_heif run_organizer.py
+      - name: Build portable single-file exe
+        run: >
+          pyinstaller --noconfirm --clean --windowed --onefile --name FileOrganizer-portable
+          --distpath dist-portable --workpath build-portable
+          --collect-data geonamescache --collect-all pillow_heif run_organizer.py
+      - name: Smoke-test the built exe starts without crashing
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath dist\FileOrganizer\FileOrganizer.exe -PassThru
+          Start-Sleep -Seconds 8
+          if ($p.HasExited) { Write-Error "FileOrganizer.exe exited early with code $($p.ExitCode)"; exit 1 }
+          Stop-Process -Id $p.Id -Force
+          Write-Host "exe stayed up for 8 seconds"
+      - name: Build installer
+        run: |
+          choco install innosetup -y --no-progress
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" installer.iss
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FileOrganizer-Setup
+          path: file-organizer/installer_out/FileOrganizer-Setup.exe
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FileOrganizer-portable
+          path: file-organizer/dist-portable/FileOrganizer-portable.exe

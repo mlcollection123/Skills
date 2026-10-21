@@ -3,7 +3,19 @@
 A local, private, free desktop tool that indexes a very large folder (built for ~2 TB and 500,000+ files),
 sorts it into a clean structure, and can undo what it did. No network access, no accounts, no telemetry.
 
-## Setup (Windows)
+## Install the .exe (no Python needed)
+
+Download `FileOrganizer-Setup.exe` (installer) or `FileOrganizer-portable.exe` (single file, no install) from the
+**Actions** tab of the GitHub repo: open the latest "Build File Organizer for Windows" run and download the
+artifact at the bottom. Unzip it and run the file. The installer needs no administrator rights and adds a Start menu entry.
+
+Windows will warn "Windows protected your PC" because the program is not code-signed (signing costs money).
+Click **More info**, then **Run anyway**. Antivirus tools sometimes flag any PyInstaller-built program;
+if yours does, use the Python route below instead, which you can read line by line.
+
+To build the .exe yourself on a Windows PC, double-click `build_exe.bat`.
+
+## Setup with Python (Windows)
 
 1. Install **Python 3.10 or newer** from python.org. In the installer keep "tcl/tk and IDLE" ticked (that is tkinter).
 2. Open PowerShell in this folder:

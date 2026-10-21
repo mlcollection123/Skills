@@ -1,3 +1,9 @@
+.venv/
+build/
+build-portable/
+dist/
+dist-portable/
+installer_out/
+*.spec
 __pycache__/
 *.pyc
-.venv/
