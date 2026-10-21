@@ -301,11 +301,11 @@ def discover(conn, run_id: int, n_files: int, rep: Reporter) -> dict:
     conn.execute("CREATE UNIQUE INDEX temp.anchor_tok ON anchor(tok)")
 
     conn.execute("DROP TABLE IF EXISTS temp.best")
-    conn.execute("CREATE TEMP TABLE best(file_id INTEGER, rnk INTEGER, tok TEXT, score REAL, surf TEXT)")
+    conn.execute("CREATE TEMP TABLE best(file_id INTEGER, rnk INTEGER, tok TEXT, score REAL, surf TEXT, txt INTEGER)")
     claims: Counter = Counter()
     co: Counter = Counter()
     cur = conn.execute(
-        "SELECT t.file_id, t.tok, SUM(t.w), a.df, MAX(t.surf), a.strong FROM tokens t "
+        "SELECT t.file_id, t.tok, SUM(t.w), a.df, MAX(t.surf), a.strong, MIN(t.src) FROM tokens t "
         "JOIN anchor a ON a.tok = t.tok JOIN files f ON f.id = t.file_id "
         "WHERE f.run_id=? AND f.project IS NULL GROUP BY t.file_id, t.tok ORDER BY t.file_id", (run_id,))
     batch: list = []
@@ -313,29 +313,33 @@ def discover(conn, run_id: int, n_files: int, rep: Reporter) -> dict:
     def flush_file(fid, items):
         items.sort(key=lambda x: -x[1])
         top = items[:_TOP_ANCHORS]
-        for i, (tok, score, surf) in enumerate(top, 1):
-            batch.append((fid, i, tok, score, surf))
+        for i, (tok, score, surf, _src) in enumerate(top, 1):
+            batch.append((fid, i, tok, score, surf, int(_src == 4)))
             claims[tok] += 1
-        for other in top[1:]:                 # star around the best anchor: bounded memory
-            a, b = sorted((top[0][0], other[0]))
-            co[(a, b)] += 1
+        # Star around the best anchor: bounded memory. A word found only inside this file's text never links two
+        # anchors: a common word such as "account" must not fuse two unrelated groups.
+        if top[0][3] != 4:
+            for other in top[1:]:
+                if other[3] != 4:
+                    a, b = sorted((top[0][0], other[0]))
+                    co[(a, b)] += 1
 
     cur_fid, items, seen = None, [], 0
-    for fid, tok, sw, df, surf, is_strong in cur:
+    for fid, tok, sw, df, surf, is_strong, min_src in cur:
         if fid != cur_fid:
             if cur_fid is not None:
                 flush_file(cur_fid, items)
                 seen += 1
                 if len(batch) >= 20_000:
-                    conn.executemany("INSERT INTO temp.best VALUES (?,?,?,?,?)", batch)
+                    conn.executemany("INSERT INTO temp.best VALUES (?,?,?,?,?,?)", batch)
                     batch.clear()
                     rep.check()
             cur_fid, items = fid, []
         # favour words shared by many files, and words that also appear in some file or folder name
-        items.append((tok, sw * math.log(1 + df) * (1.6 if is_strong else 1.0), surf))
+        items.append((tok, sw * math.log(1 + df) * (1.6 if is_strong else 1.0), surf, min_src))
     if cur_fid is not None:
         flush_file(cur_fid, items)
-    conn.executemany("INSERT INTO temp.best VALUES (?,?,?,?,?)", batch)
+    conn.executemany("INSERT INTO temp.best VALUES (?,?,?,?,?,?)", batch)
     conn.execute("CREATE INDEX temp.best_file ON best(file_id)")
 
     # Anchors that keep landing on the same files are aliases of one project.
@@ -351,27 +355,32 @@ def discover(conn, run_id: int, n_files: int, rep: Reporter) -> dict:
     sizes0: Counter = Counter()
     for (tok,) in conn.execute("SELECT tok FROM best WHERE rnk=1"):
         sizes0[uf.find(tok)] += 1
-    bridge: Counter = Counter()
-    cur_fid, roots = None, set()
+    bridge: Counter = Counter()          # any evidence: used to attach a small document family to a group
+    bridge_named: Counter = Counter()    # evidence from names, folders and codes only: may join two groups
+    cur_fid, roots, named = None, set(), set()
 
     def close_roots():
-        if len(roots) > 1:
-            ordered = sorted(roots)
-            for i in range(len(ordered)):
-                for j in range(i + 1, len(ordered)):
-                    bridge[(ordered[i], ordered[j])] += 1
+        for found, counter in ((roots, bridge), (named, bridge_named)):
+            if len(found) > 1:
+                ordered = sorted(found)
+                for i in range(len(ordered)):
+                    for j in range(i + 1, len(ordered)):
+                        counter[(ordered[i], ordered[j])] += 1
 
-    for fid, tok in conn.execute("SELECT file_id, tok FROM best ORDER BY file_id, rnk"):
+    for fid, tok, txt in conn.execute("SELECT file_id, tok, txt FROM best ORDER BY file_id, rnk"):
         if fid != cur_fid:
             close_roots()
-            cur_fid, roots = fid, set()
+            cur_fid, roots, named = fid, set(), set()
         roots.add(uf.find(tok))
+        if not txt:
+            named.add(uf.find(tok))   # a word found only in text must not fuse two real groups
     close_roots()
     family_roots = {uf.find(t) for t in claims if t.startswith("~") or any(ch.isdigit() for ch in t)}
     attach: dict[str, list] = defaultdict(list)
     for (a, b), c in bridge.items():
         small = min(sizes0[a] or 1, sizes0[b] or 1)
-        if c >= 2 and c / small >= BRIDGE_RATIO:
+        cn = bridge_named[(a, b)]
+        if cn >= 2 and cn / small >= BRIDGE_RATIO:
             uf.union(a, b)
         for lone, other in ((a, b), (b, a)):         # a document family too small to stand alone (a draft and
             if sizes0[lone] < MIN_PROJECT_FILES <= sizes0[other] and lone in family_roots:   # its signed copy)
@@ -392,8 +401,19 @@ def discover(conn, run_id: int, n_files: int, rep: Reporter) -> dict:
             root_has_strong.add(r)
     valid = {r for r, n in sizes.items() if n >= MIN_PROJECT_FILES and r in root_has_strong}
     cluster_ids = {r: i for i, r in enumerate(sorted(valid), 1)}
+    # A file linked only by a word found inside its text (nothing in its name or folder) needs a second,
+    # different anchor of the same group. One common word such as "account" must not pull a loose document in.
+    text_only = {fid for (fid,) in conn.execute(
+        "SELECT b.file_id FROM best b JOIN tokens t ON t.file_id = b.file_id AND t.tok = b.tok "
+        "WHERE b.rnk = 1 GROUP BY b.file_id HAVING MIN(t.src) = 4")}
+    support: Counter = Counter()
+    if text_only:
+        for fid, tok in conn.execute("SELECT file_id, tok FROM best"):
+            if fid in text_only:
+                support[(fid, uf.find(tok))] += 1
     upd = [(cluster_ids[uf.find(tok)], fid) for fid, tok in
-           conn.execute("SELECT file_id, tok FROM best WHERE rnk=1") if uf.find(tok) in valid]
+           conn.execute("SELECT file_id, tok FROM best WHERE rnk=1")
+           if uf.find(tok) in valid and (fid not in text_only or support[(fid, uf.find(tok))] >= 2)]
     conn.executemany("UPDATE files SET cluster=? WHERE id=?", upd)
     conn.commit()
 

@@ -660,5 +660,26 @@ class SortioParityTests(unittest.TestCase):
         self.assertNotEqual(report.fingerprint(self.src), fp)
 
 
+class WeakEvidenceTests(unittest.TestCase):
+    def test_one_common_word_in_the_text_does_not_pull_a_loose_file_in(self):
+        tmp = tempfile.mkdtemp()
+        try:
+            src, dst, dbp = os.path.join(tmp, "src"), os.path.join(tmp, "out"), os.path.join(tmp, "i.db")
+            os.environ["FILE_ORGANIZER_HOME"] = os.path.join(tmp, "home")
+            for n in ("birch farm deed", "birch farm plan", "birch farm payment"):
+                write(f"{src}/Birch Farm/{n}.txt", "birch farm records")
+            for i in range(4):
+                write(f"{src}/Birch Farm/birch farm account statement {i}.txt", "account account")
+            for i in range(6):
+                write(f"{src}/odd sheet {i}x.txt", "my account account account account")
+            engine.dry_run(dbp, src, dst, {"detect_dups": False}, Reporter(lambda m: None, min_interval=0))
+            conn = db.connect(dbp)
+            loose = [r[0] for r in conn.execute("SELECT project FROM files WHERE path LIKE '%odd sheet%'")]
+            conn.close()
+            self.assertNotIn("Birch Farm", loose)
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+
+
 if __name__ == "__main__":
     unittest.main()

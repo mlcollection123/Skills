@@ -69,6 +69,7 @@ class App(ctk.CTk):
         self._watch_last = 0.0
         self.algo = tk.StringVar(value="sha256")
         self.workers = tk.IntVar(value=HASH_WORKERS)
+        self._first_run = not os.path.exists(_settings_file())
         self._load_settings()
 
         self._style_tree()
@@ -84,6 +85,8 @@ class App(ctk.CTk):
         self._log("Ready. Pick a source and destination, then press Analyze. Nothing changes until you press Execute.")
         self._find_latest_report()
         self._load_insights()
+        if self._first_run:
+            self.after(700, self._ask_name)
 
     # ------------------------------------------------------------------------------ settings
     def _vars(self) -> dict:
@@ -106,6 +109,16 @@ class App(ctk.CTk):
                     var.set(saved[k])
                 except (tk.TclError, ValueError):
                     pass
+
+    def _ask_name(self) -> None:
+        """Your own name appears on many papers; ask once so it never becomes a project folder."""
+        dlg = ctk.CTkInputDialog(title="Welcome",
+                                 text="Your name, so it is never treated as a project folder.\n"
+                                      "Several names are fine, separated by commas. You can skip this.")
+        name = (dlg.get_input() or "").strip()
+        if name:
+            self.my_names.set(name)
+        self._save_settings()
 
     def _save_settings(self) -> None:
         try:
