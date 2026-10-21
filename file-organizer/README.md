@@ -13,8 +13,9 @@ sorts it into a clean structure, and can undo what it did. No network access, no
    pip install -r requirements.txt
    python -m file_organizer
    ```
-   `requirements.txt` holds one optional package, `pypdf`, used to read text inside searchable PDFs.
-   Without it, PDFs are still sorted by file name. Everything else uses the Python standard library.
+   `requirements.txt` holds three optional packages: `pypdf` (text inside PDFs), `Pillow` (photo dates and GPS) and
+   `geonamescache` (offline place names). Without them the program still runs and falls back to simpler sorting.
+   For iPhone `.heic` photos also run `pip install pillow-heif`. Everything else uses the Python standard library.
 3. For **Symlink** mode only: turn on *Settings > Privacy & security > For developers > Developer Mode*
    (or run PowerShell as Administrator). Copy and Move need no special rights.
 
@@ -36,10 +37,30 @@ sorts it into a clean structure, and can undo what it did. No network access, no
 | Metadata | Extension, size, creation and modification time, MIME type (guessed from the extension). |
 | Categories | Documents, Graphics-Visuals, Archives, Executables-System, Other (rules in `file_organizer/config.py`). |
 | Document keywords | Looks in the file name and, for `.txt .md .csv .pdf .docx .xlsx .pptx`, in the text. Sub-folders: Invoices, Tax, Receipts, Contracts, Projects, else General. A keyword in the name always counts; in the text it must appear twice. |
+| Smart photo folders | Reads each photo's capture date and GPS position from its EXIF data, looks the country up in an offline table (no internet), and groups photos from one country with no gap over 10 days into a trip. See below. |
 | Duplicates | Only files with identical sizes are compared. A first+last 64 KB fingerprint comes next. Only the survivors are read in full (SHA-256 or MD5). The oldest copy is kept in place; extra copies go to `_Duplicates/` (switchable). Hashes are cached, so a second dry run is faster. |
 | Plan | Stored in SQLite and in the CSV. Name clashes get ` (1)`, ` (2)` suffixes. Files are never overwritten. |
 | Execute | **Copy**: copies to a temp name, checks size (and hash if you tick Verify), then renames into place. **Move**: instant rename on the same drive; on another drive, copy, verify, then delete the source. **Symlink**: creates links, originals stay put. |
 | Undo | Every action is written to a journal *before* it happens. Undo reverses the last run, including a cancelled or crashed one. It removes only copies and links, moves files back, and deletes only empty folders it created. |
+
+## Smart photo folders
+
+For camera photos (`.jpg .jpeg .tif .tiff .heic`) that have a capture date, the folder is chosen in this order:
+
+1. **GPS found, taken abroad, 3+ photos in that country** -> `Photos\Travel\Germany 2025`.
+   Two separate trips to one country in a year get the month: `Germany 2025-03`, `Germany 2025-10`.
+2. **Photo sits in a meaningfully named folder** (for example `Birthday Party`) -> `Photos\Events\Birthday Party 2024`.
+   Generic names such as `DCIM`, `100APPLE`, `Camera`, `New folder (3)`, `Downloads` are ignored.
+3. **Date only** -> `Photos\2025\2025-07`. A date in the file name (`IMG-20250714-WA0003.jpg`) counts too.
+
+Photos with no date and no GPS keep the normal `Graphics-Visuals\JPG` folder, as do PNG, GIF, SVG and PSD files.
+Set **Home country code** (for example `GB`) so photos taken at home are not called trips.
+The tuning values (`TRIP_GAP_DAYS`, `MIN_TRIP_PHOTOS`, `MAX_GEOCODE_KM`) are in `file_organizer/config.py`.
+
+What this cannot do: it does not look at what is *in* the picture. A photo with no GPS, such as one received through
+WhatsApp or downloaded from the web, cannot be placed in "Germany" automatically. Country comes from the nearest
+town, so a photo taken right at a border can land in the neighbouring country. A trip name is a country and a year,
+not a city or an event name.
 
 Output layout: `Destination\Documents\Invoices\...`, `Destination\Graphics-Visuals\PNG\...`,
 `Destination\Archives\ZIP\...`, `Destination\_Duplicates\...`.

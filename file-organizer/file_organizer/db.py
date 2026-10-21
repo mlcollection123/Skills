@@ -64,7 +64,19 @@ def connect(path: str) -> sqlite3.Connection:
     conn.execute("PRAGMA temp_store=MEMORY")
     conn.execute("PRAGMA cache_size=-65536")
     conn.executescript(SCHEMA)
+    _migrate(conn)
     return conn
+
+
+def _migrate(conn: sqlite3.Connection) -> None:
+    """Add columns introduced after the first release to an existing database."""
+    have = {r[1] for r in conn.execute("PRAGMA table_info(files)")}
+    for col, typ in (("taken", "REAL"), ("lat", "REAL"), ("lon", "REAL"),
+                     ("country", "TEXT"), ("trip", "TEXT")):
+        if col not in have:
+            conn.execute(f"ALTER TABLE files ADD COLUMN {col} {typ}")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_files_geo ON files(run_id, country, taken)")
+    conn.commit()
 
 
 def new_run(conn: sqlite3.Connection, kind: str, source: str, dest: str, options: dict) -> int:

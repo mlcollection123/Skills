@@ -46,6 +46,12 @@ SKIP_DIR_NAMES = {
     "programdata", "appdata",
 }
 
+# ---- Smart photo folders ---------------------------------------------------------------
+PHOTO_EXTS = {".jpg", ".jpeg", ".tif", ".tiff", ".heic", ".heif"}   # camera formats that carry EXIF
+TRIP_GAP_DAYS = 10        # photos from one country more than this many days apart start a new trip
+MIN_TRIP_PHOTOS = 3       # fewer photos than this in a country: not treated as a trip
+MAX_GEOCODE_KM = 200      # GPS point further than this from any known town: no place name
+
 # ---- Performance knobs -----------------------------------------------------------------
 SCAN_BATCH = 5000            # rows per SQLite insert batch while scanning
 KEYSET_BATCH = 2000          # rows fetched per page when streaming from SQLite

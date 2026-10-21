@@ -15,7 +15,7 @@ import zipfile
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from file_organizer import analyzer, db, engine  # noqa: E402
+from file_organizer import analyzer, db, engine, photos  # noqa: E402
 from file_organizer.common import Cancelled, Reporter  # noqa: E402
 
 
@@ -204,6 +204,110 @@ class EngineTests(unittest.TestCase):
         self.assertEqual(analyzer.classify_text(None, "Invoice-2024.pdf"), "Invoices")
         self.assertIsNone(analyzer.classify_text("a single mention of tax", "doc.txt"))
         self.assertEqual(analyzer.classify_text("receipt receipt total", "x.txt"), "Receipts")
+
+
+def make_photo(path, when=None, gps=None, shade=0):
+    """Write a tiny JPEG with EXIF capture time and/or GPS (degrees, minutes, seconds)."""
+    from PIL import Image
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    ex = Image.Exif()
+    if when:
+        ex[306] = when
+    if gps:
+        (la, lo) = gps
+        ex[0x8825] = {1: "N" if la >= 0 else "S", 2: (abs(int(la)), int(abs(la) % 1 * 60), 0.0),
+                      3: "E" if lo >= 0 else "W", 4: (abs(int(lo)), int(abs(lo) % 1 * 60), 0.0)}
+    Image.new("RGB", (8 + shade, 8), (shade * 7 % 255, shade * 13 % 255, 90)).save(path, exif=ex)
+
+
+@unittest.skipUnless(all(photos.available()), "needs: pip install Pillow geonamescache")
+class PhotoTests(unittest.TestCase):
+    BERLIN, MUNICH, PARIS, ROME = (52.52, 13.40), (48.14, 11.57), (48.85, 2.35), (41.90, 12.50)
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.src, self.dst = os.path.join(self.tmp, "src"), os.path.join(self.tmp, "dst")
+        self.db = os.path.join(self.tmp, "index.db")
+        os.environ["FILE_ORGANIZER_HOME"] = os.path.join(self.tmp, "home")
+        self.rep = Reporter(lambda m: None, min_interval=0)
+        n = 0
+        for i, (gps, day) in enumerate([(self.BERLIN, 10), (self.BERLIN, 11), (self.MUNICH, 14),
+                                        (self.MUNICH, 15)]):          # one Germany trip
+            n += 1
+            make_photo(f"{self.src}/DCIM/100APPLE/g{i}.jpg", f"2025:07:{day:02d} 10:00:00", gps, n)
+        for i, day in enumerate((3, 4, 5)):                              # one France trip
+            n += 1
+            make_photo(f"{self.src}/DCIM/100APPLE/f{i}.jpg", f"2025:08:{day:02d} 12:00:00", self.PARIS, n)
+        n += 1
+        make_photo(f"{self.src}/DCIM/100APPLE/rome.jpg", "2025:09:01 09:00:00", self.ROME, n)   # stray
+        for i in range(2):                                               # no GPS, in a named folder
+            n += 1
+            make_photo(f"{self.src}/Birthday Party/b{i}.jpg", f"2024:05:0{i + 1} 18:00:00", None, n)
+        n += 1
+        make_photo(f"{self.src}/misc/dated.jpg", "2023:03:09 08:00:00", None, n)               # date only
+        n += 1
+        make_photo(f"{self.src}/misc/nometa.jpg", None, None, n)                              # no EXIF
+        n += 1
+        make_photo(f"{self.src}/misc/IMG-20220102-WA0001.jpg", None, None, n)                 # date in name
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def plan(self, **opts):
+        engine.dry_run(self.db, self.src, self.dst, opts, self.rep)
+        conn = db.connect(self.db)
+        return {os.path.basename(s): os.path.relpath(d, self.dst).replace("\\", "/")
+                for s, d in conn.execute("SELECT src, dst FROM plan WHERE dst IS NOT NULL")}
+
+    def test_trips_events_and_dates(self):
+        p = self.plan()
+        for f in ("g0.jpg", "g1.jpg", "g2.jpg", "g3.jpg"):
+            self.assertEqual(os.path.dirname(p[f]), "Photos/Travel/Germany 2025", f)
+        for f in ("f0.jpg", "f1.jpg", "f2.jpg"):
+            self.assertEqual(os.path.dirname(p[f]), "Photos/Travel/France 2025", f)
+        self.assertEqual(os.path.dirname(p["rome.jpg"]), "Photos/2025/2025-09")   # 1 photo: no trip
+        self.assertEqual(os.path.dirname(p["b0.jpg"]), "Photos/Events/Birthday Party 2024")
+        self.assertEqual(os.path.dirname(p["dated.jpg"]), "Photos/2023/2023-03")
+        self.assertEqual(os.path.dirname(p["IMG-20220102-WA0001.jpg"]), "Photos/2022/2022-01")
+        self.assertEqual(os.path.dirname(p["nometa.jpg"]), "Graphics-Visuals/JPG")  # no date: old rules
+
+    def test_home_country_photos_are_not_trips(self):
+        p = self.plan(home_country="FR")
+        self.assertEqual(os.path.dirname(p["f0.jpg"]), "Photos/2025/2025-08")
+        self.assertEqual(os.path.dirname(p["g0.jpg"]), "Photos/Travel/Germany 2025")
+
+    def test_two_trips_same_country_same_year_get_months(self):
+        make_photo(f"{self.src}/DCIM/100APPLE/g9.jpg", "2025:10:20 10:00:00", self.BERLIN, 40)
+        make_photo(f"{self.src}/DCIM/100APPLE/g10.jpg", "2025:10:21 10:00:00", self.BERLIN, 41)
+        make_photo(f"{self.src}/DCIM/100APPLE/g11.jpg", "2025:10:22 10:00:00", self.BERLIN, 42)
+        p = self.plan()
+        self.assertEqual(os.path.dirname(p["g0.jpg"]), "Photos/Travel/Germany 2025-07")
+        self.assertEqual(os.path.dirname(p["g9.jpg"]), "Photos/Travel/Germany 2025-10")
+
+    def test_switch_off_restores_plain_folders(self):
+        p = self.plan(smart_photos=False)
+        self.assertEqual(os.path.dirname(p["g0.jpg"]), "Graphics-Visuals/JPG")
+
+    def test_geocoder(self):
+        geo = photos.Geo()
+        self.assertEqual(geo.country(*self.BERLIN), "DE")
+        self.assertEqual(geo.country(*self.PARIS), "FR")
+        self.assertIsNone(geo.country(0.5, -30.0))          # middle of the Atlantic
+
+    def test_folder_hint(self):
+        self.assertIsNone(photos.folder_hint("/x/DCIM/100APPLE/a.jpg"))
+        self.assertIsNone(photos.folder_hint("/x/New folder (3)/a.jpg"))
+        self.assertEqual(photos.folder_hint("/x/Summer Holiday/a.jpg"), "Summer Holiday")
+
+    def test_executes_and_undoes_photo_layout(self):
+        self.plan()
+        before = snapshot(self.src)
+        r = engine.execute(self.db, self.src, self.dst, "copy", {}, self.rep)
+        self.assertEqual(r["failed"], 0)
+        self.assertTrue(os.path.isdir(os.path.join(self.dst, "Photos", "Travel", "Germany 2025")))
+        self.assertTrue(engine.undo(self.db, self.rep)["complete"])
+        self.assertEqual(snapshot(self.src), before)
+        self.assertEqual(os.listdir(self.dst), [])
 
 
 if __name__ == "__main__":

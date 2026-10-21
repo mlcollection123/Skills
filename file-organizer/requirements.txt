@@ -1,2 +1,6 @@
-# Optional: enables text search inside searchable PDFs. Everything else is standard library.
+# pypdf: text inside searchable PDFs.  Pillow: photo dates and GPS.
+# geonamescache: offline town/country table for trip names (pure Python, no internet needed).
+# pillow-heif (optional, add yourself): lets Pillow read iPhone .heic photos.
 pypdf>=4.0
+Pillow>=10.0
+geonamescache>=1.6

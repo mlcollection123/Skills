@@ -5,7 +5,7 @@ import json
 import os
 import time
 
-from . import analyzer, db, executor, planner, scanner
+from . import analyzer, db, executor, photos, planner, scanner
 from .common import Cancelled, Reporter, human_size, is_inside, norm
 from .config import HASH_WORKERS, report_dir
 
@@ -14,6 +14,8 @@ DEFAULT_OPTS = {
     "segregate_dups": True,    # send extra duplicate copies to <dest>/_Duplicates for review
     "detect_dups": True,
     "read_content": True,      # peek inside txt/md/csv/pdf/docx/xlsx/pptx for keywords
+    "smart_photos": True,      # photo folders from EXIF date + GPS (trips, events, year-month)
+    "home_country": "",        # ISO code, e.g. "GB": photos taken at home are not called trips
     "hash_algo": "sha256",     # or "md5" (faster, fine for spotting duplicates)
     "workers": HASH_WORKERS,
     "verify": False,           # re-hash every copied file after copying (slow, thorough)
@@ -84,12 +86,18 @@ def dry_run(db_path: str, src: str, dest: str, opts: dict | None, rep: Reporter)
         subs = analyzer.classify_documents(conn, run_id, rep, opts["workers"], opts["read_content"])
         if subs:
             rep.log("Document sub-categories: " + ", ".join(f"{k}={v:,}" for k, v in subs.items()))
+        if opts["smart_photos"]:
+            ph = photos.analyze(conn, run_id, rep, opts["workers"], opts["home_country"])
+            if ph["photos"]:
+                rep.log(f"Photos: {ph['photos']:,} read, {ph['with_date']:,} with a date, "
+                        f"{ph['with_gps']:,} with GPS, {len(ph['trips'])} trips found.")
         dup = {"duplicate_files": 0, "duplicate_groups": 0, "wasted_bytes": 0}
         if opts["detect_dups"]:
             dup = analyzer.find_duplicates(conn, run_id, opts["hash_algo"], opts["workers"], rep)
             rep.log(f"Duplicates: {dup['duplicate_files']:,} extra copies in {dup['duplicate_groups']:,} "
                     f"groups, wasting {human_size(dup['wasted_bytes'])}.")
-        counts = planner.build_plan(conn, run_id, dest, opts["include_exec"], opts["segregate_dups"], rep)
+        counts = planner.build_plan(conn, run_id, dest, opts["include_exec"], opts["segregate_dups"], rep,
+                                    opts["smart_photos"])
         csv_path, txt_path = planner.write_report(conn, run_id, report_dir(), src, dest)
         summary = {"files": stats.files, "bytes": stats.bytes, **dup, **counts,
                    "report_csv": csv_path, "report_txt": txt_path,

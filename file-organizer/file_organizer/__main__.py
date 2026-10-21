@@ -27,6 +27,7 @@ def _print_sink(msg: tuple) -> None:
 def _opts(a) -> dict:
     return {"include_exec": a.include_exec, "segregate_dups": not a.no_segregate,
             "detect_dups": not a.no_dups, "read_content": not a.no_content,
+            "smart_photos": not a.no_photos, "home_country": a.home,
             "hash_algo": a.hash, "workers": a.workers, "verify": a.verify}
 
 
@@ -41,6 +42,8 @@ def main(argv: list[str] | None = None) -> int:
         p.add_argument("--no-segregate", action="store_true")
         p.add_argument("--no-dups", action="store_true")
         p.add_argument("--no-content", action="store_true")
+        p.add_argument("--no-photos", action="store_true", help="skip smart photo folders")
+        p.add_argument("--home", default="", help="home country code, e.g. GB (not treated as a trip)")
         p.add_argument("--hash", choices=["sha256", "md5"], default="sha256")
         p.add_argument("--workers", type=int, default=4)
         p.add_argument("--verify", action="store_true")
