@@ -48,12 +48,56 @@ To build the .exe yourself on a Windows PC, double-click `build_exe.bat`.
 | Scan | Streams the folder with `os.scandir`, writes rows to SQLite in batches of 5,000. Memory stays flat (about 120 MB for 150,000 files in testing). |
 | Metadata | Extension, size, creation and modification time, MIME type (guessed from the extension). |
 | Categories | Documents, Graphics-Visuals, Archives, Executables-System, Other (rules in `file_organizer/config.py`). |
+| Project folders | Groups files by what they belong to, using names, folders, codes and text (see below). |
 | Document keywords | Looks in the file name and, for `.txt .md .csv .pdf .docx .xlsx .pptx`, in the text. Sub-folders: Invoices, Tax, Receipts, Contracts, Projects, else General. A keyword in the name always counts; in the text it must appear twice. |
 | Smart photo folders | Reads each photo's capture date and GPS position from its EXIF data, looks the country up in an offline table (no internet), and groups photos from one country with no gap over 10 days into a trip. See below. |
 | Duplicates | Only files with identical sizes are compared. A first+last 64 KB fingerprint comes next. Only the survivors are read in full (SHA-256 or MD5). The oldest copy is kept in place; extra copies go to `_Duplicates/` (switchable). Hashes are cached, so a second dry run is faster. |
 | Plan | Stored in SQLite and in the CSV. Name clashes get ` (1)`, ` (2)` suffixes. Files are never overwritten. |
 | Execute | **Copy**: copies to a temp name, checks size (and hash if you tick Verify), then renames into place. **Move**: instant rename on the same drive; on another drive, copy, verify, then delete the source. **Symlink**: creates links, originals stay put. |
 | Undo | Every action is written to a journal *before* it happens. Undo reverses the last run, including a cancelled or crashed one. It removes only copies and links, moves files back, and deletes only empty folders it created. |
+
+## Project folders: files that belong together go together
+
+Instead of sorting by file type, the program works out *what a file belongs to* (a property, a client, a job)
+and groups everything about it, for example `Projects\\Gerakies\\Altia\\Drafts`, `...\\Payments & Banking`,
+`...\\Design & Drawings`, `...\\Title & Legal`. It decides from four kinds of evidence:
+
+1. **File names**: shared distinctive words and reference codes (`HX-31299`, `plot458`).
+2. **Folder names** you already made (a descriptive folder like `Altia` counts; `Downloads`, `New folder` do not).
+3. **Text inside** PDF, Word, Excel, PowerPoint, HTML, JSON and text files. A single mention of a known project
+   name in a contract is enough to link it.
+4. **Versions of one document**: a signed copy and its draft stay together even if only the draft has readable text.
+
+Greek and Latin spellings are treated as the same word (`Γερακιές`, `Gerakies`, `Yerakies`), and a Greek letter
+that looks like a Latin one inside a code (`HΧ-31299` with a Greek Χ) still matches `HX-31299`.
+
+Inside a project the sub-folder is a **document role** read from the name first, then the text: Contracts &
+Agreements, Payments & Banking, Identity & KYC, Design & Drawings, Title & Legal, Tax & Government,
+Correspondence, Reports & Summaries. A meaningful folder you already had inside the project (3+ files) is
+kept instead (`Altia`). Drafts go in a `Drafts` sub-folder. Files with no evidence stay in the normal type folders.
+Every file in the CSV report has `project`, `role` and `why_grouped` columns so you can check each decision.
+
+**Your own rules (optional).** Create `%LOCALAPPDATA%\\FileOrganizer\\projects.json`:
+
+```json
+{
+  "Gerakies Plot": ["gerakies", "γερακιές", "plot 458"],
+  "Kitchen Renovation": ["kitchen", "oak cabinets"],
+  "ignore": ["marios", "leonidou"]
+}
+```
+A file containing any alias goes to that project. Words under `ignore` never link files: put your own name there,
+or it will form a "project" out of your ID papers and statements.
+
+What it cannot do: **read scanned pages.** A scanned ID, signed contract or photographed receipt has no text, so
+only its name and folder count. In a flat folder, a scan called `scan0042.pdf` cannot be placed. OCR (reading text
+from images) is not built in. Small accidental groups also happen: two unrelated files that share a rare word. The
+tuning values (`MIN_PROJECT_FILES`, `MERGE_RATIO`, `BRIDGE_RATIO`) are in `file_organizer/config.py`.
+
+Measured on synthetic data: 300 projects (65,000 files) in one flat folder were all grouped correctly in 44
+seconds using about 140 MB of memory; about 1.6% of 20,000 unrelated files were pulled into small accidental
+groups. On a real 25-file property folder with its folders intact, all 25 files were grouped as the owner had done by
+hand; flattened into one folder, 21 of 25 were grouped and the 4 unreadable scans stayed out.
 
 ## Smart photo folders
 

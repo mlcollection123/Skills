@@ -15,8 +15,21 @@ from .db import iter_batches
 _BAD = re.compile(r'[<>:"/\\|?*\x00-\x1f]')
 
 
+def _clean(name: str, limit: int = 60) -> str:
+    return _BAD.sub("_", name).strip(" .")[:limit] or "Other"
+
+
 def target_subdir(category: str, subcategory: str | None, ext: str, is_dup: bool, segregate: bool,
-                  path: str = "", taken: float | None = None, trip: str | None = None) -> str:
+                  path: str = "", taken: float | None = None, trip: str | None = None,
+                  project: str | None = None, role: str | None = None, status: str | None = None,
+                  subgroup: str | None = None) -> str:
+    if project:
+        parts = ["Projects", _clean(project), _clean(subgroup or role or "Other")]
+        if status == "draft":
+            parts.append("Drafts")
+        if is_dup and segregate:
+            parts.insert(0, "_Duplicates")
+        return os.path.join(*parts)
     if taken is not None and photos.is_photo(category, ext):
         rel = photos.photo_subdir(path, taken, trip)
         return os.path.join("_Duplicates", rel) if (is_dup and segregate) else rel
@@ -57,12 +70,14 @@ def build_plan(conn, run_id: int, dest: str, include_exec: bool, segregate_dups:
     conn.commit()
     dest_root = os.path.abspath(dest)
     total = conn.execute("SELECT COUNT(*) FROM files WHERE run_id=?", (run_id,)).fetchone()[0]
-    sql = ("SELECT id, path, ext, size, mtime, category, subcategory, is_dup, taken, trip FROM files "
+    sql = ("SELECT id, path, ext, size, mtime, category, subcategory, is_dup, taken, trip, "
+           "project, role, status, subgroup FROM files "
            "WHERE run_id=? AND id>? ORDER BY id LIMIT ?")
     done = planned = skipped = 0
     for rows in iter_batches(conn, sql, (run_id,), KEYSET_BATCH):
         rep.check()
-        for fid, path, ext, size, mtime, cat, sub, is_dup, taken, trip in rows:
+        for (fid, path, ext, size, mtime, cat, sub, is_dup, taken, trip,
+                 project, role, status, subgroup) in rows:
             if cat == CATEGORY_EXEC and not include_exec:
                 conn.execute(
                     "INSERT INTO plan(run_id, file_id, src, size, mtime, status, reason) "
@@ -72,7 +87,8 @@ def build_plan(conn, run_id: int, dest: str, include_exec: bool, segregate_dups:
                 skipped += 1
             else:
                 rel = target_subdir(cat, sub, ext, bool(is_dup), segregate_dups, path=path,
-                                    taken=taken if smart_photos else None, trip=trip)
+                                    taken=taken if smart_photos else None, trip=trip,
+                                    project=project, role=role, status=status, subgroup=subgroup)
                 _insert_unique(conn, run_id, fid, path, dest_root, rel, size, mtime)
                 planned += 1
         conn.commit()
@@ -99,7 +115,10 @@ def summarize(conn, run_id: int) -> dict:
                               (run_id,)).fetchone()[0]
     trips = conn.execute("SELECT trip, COUNT(*) FROM files WHERE run_id=? AND trip IS NOT NULL "
                          "GROUP BY trip ORDER BY 2 DESC LIMIT 25", (run_id,)).fetchall()
-    return {"trips": trips, "by_category": by_cat, "by_subcategory": by_sub, "duplicates": (dup_n, dup_b),
+    projects = conn.execute("SELECT project, COUNT(*), COALESCE(SUM(size),0) FROM files WHERE run_id=? AND "
+                            "project IS NOT NULL GROUP BY project ORDER BY 2 DESC LIMIT 40",
+                            (run_id,)).fetchall()
+    return {"projects": projects, "trips": trips, "by_category": by_cat, "by_subcategory": by_sub, "duplicates": (dup_n, dup_b),
             "cleanup": (clean_n, clean_b), "plan": plan, "plan_bytes": plan_bytes}
 
 
@@ -109,12 +128,12 @@ def write_report(conn, run_id: int, report_dir: str, source: str, dest: str) -> 
     csv_path = os.path.join(report_dir, f"dryrun_{run_id}_{stamp}.csv")
     txt_path = os.path.join(report_dir, f"dryrun_{run_id}_{stamp}_summary.txt")
     sql = ("SELECT p.id, p.status, f.category, f.subcategory, f.is_dup, f.cleanup, p.size, p.src, "
-           "p.dst, p.reason FROM plan p JOIN files f ON f.id = p.file_id "
+           "p.dst, p.reason, f.project, f.role, f.reason FROM plan p JOIN files f ON f.id = p.file_id "
            "WHERE p.run_id=? AND p.id>? ORDER BY p.id LIMIT ?")
     with open(csv_path, "w", newline="", encoding="utf-8-sig") as fh:
         w = csv.writer(fh)
         w.writerow(["plan_id", "status", "category", "subcategory", "duplicate", "cleanup_flag",
-                    "size_bytes", "source", "destination", "note"])
+                    "size_bytes", "source", "destination", "note", "project", "role", "why_grouped"])
         for rows in iter_batches(conn, sql, (run_id,), KEYSET_BATCH):
             w.writerows(rows)
     s = summarize(conn, run_id)
@@ -125,6 +144,9 @@ def write_report(conn, run_id: int, report_dir: str, source: str, dest: str) -> 
     if s["by_subcategory"]:
         lines += ["", "Document sub-categories (from names and text):"]
         lines += [f"  {sub:<20} {n:>9,}" for sub, n in s["by_subcategory"]]
+    if s["projects"]:
+        lines += ["", "Projects found (files grouped by what they belong to):"]
+        lines += [f"  {p:<32} {n:>7,} files  {human_size(b):>10}" for p, n, b in s["projects"]]
     if s["trips"]:
         lines += ["", "Photo trips detected (from GPS + dates):"]
         lines += [f"  {t:<30} {n:>7,} photos" for t, n in s["trips"]]

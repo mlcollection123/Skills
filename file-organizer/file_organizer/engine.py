@@ -5,7 +5,7 @@ import json
 import os
 import time
 
-from . import analyzer, db, executor, photos, planner, scanner
+from . import analyzer, db, executor, photos, planner, projects, scanner
 from .common import Cancelled, Reporter, human_size, is_inside, norm
 from .config import HASH_WORKERS, report_dir
 
@@ -14,6 +14,7 @@ DEFAULT_OPTS = {
     "segregate_dups": True,    # send extra duplicate copies to <dest>/_Duplicates for review
     "detect_dups": True,
     "read_content": True,      # peek inside txt/md/csv/pdf/docx/xlsx/pptx for keywords
+    "group_projects": True,    # link files that belong together into project folders (names, folders, text)
     "smart_photos": True,      # photo folders from EXIF date + GPS (trips, events, year-month)
     "home_country": "",        # ISO code, e.g. "GB": photos taken at home are not called trips
     "hash_algo": "sha256",     # or "md5" (faster, fine for spotting duplicates)
@@ -83,14 +84,23 @@ def dry_run(db_path: str, src: str, dest: str, opts: dict | None, rep: Reporter)
                 f"{stats.skipped_links} links skipped, {stats.skipped_cloud} cloud-only placeholders skipped.")
         if stats.files == 0:
             raise RuntimeError("No files found in the source directory.")
-        subs = analyzer.classify_documents(conn, run_id, rep, opts["workers"], opts["read_content"])
-        if subs:
-            rep.log("Document sub-categories: " + ", ".join(f"{k}={v:,}" for k, v in subs.items()))
         if opts["smart_photos"]:
             ph = photos.analyze(conn, run_id, rep, opts["workers"], opts["home_country"])
             if ph["photos"]:
                 rep.log(f"Photos: {ph['photos']:,} read, {ph['with_date']:,} with a date, "
                         f"{ph['with_gps']:,} with GPS, {len(ph['trips'])} trips found.")
+        grouping = {"projects": 0, "grouped": 0}
+        if opts["group_projects"]:
+            idx = projects.index_files(conn, run_id, src, rep, opts["workers"], opts["read_content"])
+            subs = idx["subcategories"]
+            grouping = projects.discover(conn, run_id, idx["indexed"], rep)
+            rep.log(f"Projects: {grouping['grouped']:,} files grouped into {grouping['projects']} project "
+                    f"folders" + (f" ({grouping.get('ruled', 0):,} by your rules)" if grouping.get("ruled") else "")
+                    + ".")
+        else:
+            subs = analyzer.classify_documents(conn, run_id, rep, opts["workers"], opts["read_content"])
+        if subs:
+            rep.log("Document sub-categories: " + ", ".join(f"{k}={v:,}" for k, v in subs.items()))
         dup = {"duplicate_files": 0, "duplicate_groups": 0, "wasted_bytes": 0}
         if opts["detect_dups"]:
             dup = analyzer.find_duplicates(conn, run_id, opts["hash_algo"], opts["workers"], rep)
@@ -100,6 +110,7 @@ def dry_run(db_path: str, src: str, dest: str, opts: dict | None, rep: Reporter)
                                     opts["smart_photos"])
         csv_path, txt_path = planner.write_report(conn, run_id, report_dir(), src, dest)
         summary = {"files": stats.files, "bytes": stats.bytes, **dup, **counts,
+                   "projects": grouping["projects"], "grouped": grouping["grouped"],
                    "report_csv": csv_path, "report_txt": txt_path,
                    "seconds": round(time.monotonic() - t0, 1)}
         db.finish_run(conn, run_id, "complete", summary)
@@ -125,6 +136,7 @@ def _drop_old_dry_runs(conn, keep_id: int, src: str, dest: str) -> None:
         (keep_id, os.path.abspath(src), os.path.abspath(dest))).fetchall()]
     for rid in old:
         conn.execute("DELETE FROM plan WHERE run_id=?", (rid,))
+        conn.execute("DELETE FROM tokens WHERE file_id IN (SELECT id FROM files WHERE run_id=?)", (rid,))
         conn.execute("DELETE FROM files WHERE run_id=?", (rid,))
         conn.execute("UPDATE runs SET status='superseded' WHERE id=?", (rid,))
     conn.commit()

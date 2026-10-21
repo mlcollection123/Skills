@@ -42,6 +42,7 @@ class App(tk.Tk):
         self.segregate = tk.BooleanVar(value=True)
         self.detect_dups = tk.BooleanVar(value=True)
         self.read_content = tk.BooleanVar(value=True)
+        self.group_projects = tk.BooleanVar(value=True)
         self.smart_photos = tk.BooleanVar(value=True)
         self.home = tk.StringVar()
         self.verify = tk.BooleanVar(value=False)
@@ -87,6 +88,7 @@ class App(tk.Tk):
             ("Detect duplicates", self.detect_dups),
             ("Put duplicate copies in _Duplicates", self.segregate),
             ("Read inside documents for keywords", self.read_content),
+            ("Group related files into project folders (names, folders, text)", self.group_projects),
             ("Smart photo folders (trips, events, dates)", self.smart_photos),
             ("Also sort executables/system files (not recommended)", self.include_exec),
             ("Verify copies by hash (slow)", self.verify),
@@ -96,8 +98,8 @@ class App(tk.Tk):
                 row=1 + i // 2, column=(i % 2) * 3, columnspan=3, sticky="w", padx=6, pady=1)
 
         ttk.Label(opt, text="Home country code (optional, e.g. GB, DE, US):").grid(
-            row=4, column=0, columnspan=2, sticky="w", padx=6, pady=3)
-        ttk.Entry(opt, textvariable=self.home, width=6).grid(row=4, column=2, sticky="w")
+            row=5, column=0, columnspan=2, sticky="w", padx=6, pady=3)
+        ttk.Entry(opt, textvariable=self.home, width=6).grid(row=5, column=2, sticky="w")
 
         btns = ttk.Frame(frm)
         btns.grid(row=3, column=0, columnspan=3, sticky="ew", **pad)
@@ -145,7 +147,7 @@ class App(tk.Tk):
         return {
             "include_exec": self.include_exec.get(), "segregate_dups": self.segregate.get(),
             "detect_dups": self.detect_dups.get(), "read_content": self.read_content.get(),
-            "smart_photos": self.smart_photos.get(), "home_country": self.home.get().strip().upper(),
+            "group_projects": self.group_projects.get(), "smart_photos": self.smart_photos.get(), "home_country": self.home.get().strip().upper(),
             "hash_algo": self.algo.get(), "verify": self.verify.get(),
             "workers": max(1, int(self.workers.get() or 1)),
         }

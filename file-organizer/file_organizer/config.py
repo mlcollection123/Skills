@@ -52,6 +52,13 @@ TRIP_GAP_DAYS = 10        # photos from one country more than this many days apa
 MIN_TRIP_PHOTOS = 3       # fewer photos than this in a country: not treated as a trip
 MAX_GEOCODE_KM = 200      # GPS point further than this from any known town: no place name
 
+# ---- Project grouping ------------------------------------------------------------------
+MIN_PROJECT_FILES = 3     # a group needs at least this many files to get its own project folder
+MERGE_RATIO = 0.3         # two anchors are one project when this share of the smaller one co-occurs
+BRIDGE_RATIO = 0.25       # two groups join when 2+ files bridge them and this share of the smaller group does
+ANCHOR_CAP_MIN = 30       # words found in more files than max(this, 1% of all files) are too common
+ANCHOR_CAP_FRAC = 0.01
+
 # ---- Performance knobs -----------------------------------------------------------------
 SCAN_BATCH = 5000            # rows per SQLite insert batch while scanning
 KEYSET_BATCH = 2000          # rows fetched per page when streaming from SQLite

@@ -15,7 +15,7 @@ import zipfile
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from file_organizer import analyzer, db, engine, photos  # noqa: E402
+from file_organizer import analyzer, db, engine, lexicon, photos, projects  # noqa: E402
 from file_organizer.common import Cancelled, Reporter  # noqa: E402
 
 
@@ -308,6 +308,132 @@ class PhotoTests(unittest.TestCase):
         self.assertTrue(engine.undo(self.db, self.rep)["complete"])
         self.assertEqual(snapshot(self.src), before)
         self.assertEqual(os.listdir(self.dst), [])
+
+
+class ProjectTests(unittest.TestCase):
+    """Synthetic data only: nothing in here comes from a real person's documents."""
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.src, self.dst = os.path.join(self.tmp, "in"), os.path.join(self.tmp, "out")
+        self.db = os.path.join(self.tmp, "index.db")
+        os.environ["FILE_ORGANIZER_HOME"] = os.path.join(self.tmp, "home")
+        self.rep = Reporter(lambda m: None, min_interval=0)
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def plan(self, **opts):
+        opts.setdefault("detect_dups", False)       # the fake files are tiny and similar
+        engine.dry_run(self.db, self.src, self.dst, opts, self.rep)
+        conn = db.connect(self.db)
+        return {os.path.basename(s): os.path.relpath(d, self.dst).replace("\\", "/")
+                for s, d in conn.execute("SELECT src, dst FROM plan WHERE dst IS NOT NULL")}
+
+    def test_spellings_and_scripts_are_one_word(self):
+        keys = {lexicon.canon(w) for w in ("Γερακιές", "Gerakies", "Yerakies", "ΓΕΡΑΚΙΕΣ", "γερακιών")}
+        self.assertEqual(len(keys), 1)
+        self.assertEqual(lexicon.codes("HΧ-31299_Reservation"), lexicon.codes("HX-31299 signed") - {"signed"})
+
+    def test_groups_by_name_across_languages_and_drafts(self):
+        d = self.src
+        write(f"{d}/Gerakies - site plan.txt", "site plan")
+        write(f"{d}/Gerakies - house drawings.txt", "drawings")
+        write(f"{d}/Γερακιές Πληρωμή 1.txt", "payment")
+        write(f"{d}/Γερακιές Πληρωμή 2.txt", "payment")
+        write(f"{d}/Γερακιές - Τίτλος Ιδιοκτησίας.txt", "title")
+        write(f"{d}/HX-31299 Reservation Agreement.txt", "the reservation of Yerakies plot, Yerakies village")
+        write(f"{d}/HΧ-31299 Reservation Agreement Signed.txt", "")
+        # an unrelated project and some loners
+        for n in ("Kitchen Renovation quote", "Kitchen Renovation invoice", "Kitchen Renovation photos list"):
+            write(f"{d}/{n}.txt", "oak cabinets")
+        write(f"{d}/shopping.txt", "milk")
+        write(f"{d}/lunch.txt", "pasta")
+        p = self.plan()
+        folders = {n: f.split("/")[1] for n, f in p.items() if f.startswith("Projects/")}
+        gerakies = {n for n, proj in folders.items() if proj == folders["Gerakies - site plan.txt"]}
+        self.assertEqual(len(gerakies), 7, folders)                         # Greek + Latin + signed/draft
+        self.assertIn("HΧ-31299 Reservation Agreement Signed.txt", gerakies)
+        kitchen = {n for n, proj in folders.items() if "Kitchen" in n}
+        self.assertEqual(len({folders[n] for n in kitchen}), 1)
+        self.assertNotEqual(folders["Kitchen Renovation quote.txt"], folders["Gerakies - site plan.txt"])
+        self.assertNotIn("shopping.txt", folders)                           # unrelated files stay out
+        self.assertNotIn("lunch.txt", folders)
+
+    def test_roles_drafts_and_inherited_roles(self):
+        d = self.src
+        write(f"{d}/Orchid House - payment 1.txt", "x")
+        write(f"{d}/Orchid House - payment 2.txt", "x")
+        write(f"{d}/Orchid House - floor plan.txt", "x")
+        write(f"{d}/Orchid House - Lease Agreement.txt", "x")
+        write(f"{d}/Orchid House - Lease Agreement Signed.txt", "x")
+        write(f"{d}/Orchid House - Lease Agreement Draft.txt", "x")
+        p = self.plan()
+        self.assertEqual(os.path.dirname(p["Orchid House - payment 1.txt"]).split("/")[-1], "Payments & Banking")
+        self.assertEqual(os.path.dirname(p["Orchid House - floor plan.txt"]).split("/")[-1], "Design & Drawings")
+        self.assertEqual(os.path.dirname(p["Orchid House - Lease Agreement Signed.txt"]).split("/")[-1],
+                         "Contracts & Agreements")
+        self.assertTrue(p["Orchid House - Lease Agreement Draft.txt"].endswith(
+            "Contracts & Agreements/Drafts/Orchid House - Lease Agreement Draft.txt"))
+
+    def test_keeps_a_meaningful_source_subfolder_and_ignores_generic_ones(self):
+        d = self.src
+        for n in ("a", "b", "c", "d"):
+            write(f"{d}/Orchid House/Acme Ltd/{n}.txt", f"Acme contract {n}")
+        write(f"{d}/Orchid House/Orchid House - plan.txt", "x")
+        write(f"{d}/Orchid House/Orchid House - tax.txt", "x")
+        write(f"{d}/Orchid House/Downloads/Orchid House - id.txt", "x")
+        p = self.plan()
+        self.assertTrue(p["a.txt"].startswith("Projects/Orchid House/Acme Ltd/"), p["a.txt"])
+        self.assertNotIn("Downloads", p["Orchid House - id.txt"])
+        self.assertNotIn("Orchid House/Orchid House", p["Orchid House - plan.txt"])   # no folder repeating the project
+
+    def test_scan_root_name_is_not_a_project(self):
+        root = os.path.join(self.tmp, "Archive 2019 stuff")
+        self.src = root
+        for n in ("alpha one", "beta two", "gamma three", "delta four"):
+            write(f"{root}/{n}.txt", "x")
+        p = self.plan()
+        self.assertFalse(any(f.startswith("Projects/") for f in p.values()), p)
+
+    def test_user_rules_force_a_project_and_ignore_list_blocks_a_word(self):
+        d = self.src
+        write(f"{d}/zebra notes.txt", "x")
+        write(f"{d}/zebra budget.txt", "x")
+        write(f"{d}/ζέβρα photos.txt", "x")
+        home = os.environ["FILE_ORGANIZER_HOME"]
+        os.makedirs(home, exist_ok=True)
+        with open(os.path.join(home, "projects.json"), "w", encoding="utf-8") as fh:
+            fh.write('{"Safari Trip": ["zebra"], "ignore": ["budget"]}')
+        p = self.plan()
+        self.assertTrue(all(p[n].startswith("Projects/Safari Trip/") for n in ("zebra notes.txt", "zebra budget.txt",
+                                                                                 "ζέβρα photos.txt")), p)
+
+    def test_two_name_free_scans_stay_unassigned(self):
+        d = self.src
+        for n in ("scan0001", "scan0002", "scan0003", "scan0004"):
+            write(f"{d}/{n}.txt", "x")
+        p = self.plan()
+        self.assertFalse(any(f.startswith("Projects/") for f in p.values()), p)
+
+    def test_grouping_can_be_switched_off(self):
+        d = self.src
+        for n in ("Orchid House plan", "Orchid House tax", "Orchid House id"):
+            write(f"{d}/{n}.txt", "x")
+        p = self.plan(group_projects=False)
+        self.assertFalse(any(f.startswith("Projects/") for f in p.values()), p)
+
+    def test_project_files_execute_and_undo(self):
+        d = self.src
+        for n in ("Orchid House plan", "Orchid House tax", "Orchid House id"):
+            write(f"{d}/{n}.txt", n)
+        before = snapshot(self.src)
+        self.plan()
+        r = engine.execute(self.db, self.src, self.dst, "move", {}, self.rep)
+        self.assertEqual(r["failed"], 0)
+        self.assertTrue(os.path.isdir(os.path.join(self.dst, "Projects", "Orchid House")))
+        self.assertTrue(engine.undo(self.db, self.rep)["complete"])
+        self.assertEqual(snapshot(self.src), before)
 
 
 if __name__ == "__main__":

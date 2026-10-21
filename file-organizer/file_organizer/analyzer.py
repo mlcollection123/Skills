@@ -21,7 +21,8 @@ try:  # optional dependency: searchable-PDF text
 except Exception:  # pragma: no cover
     pypdf = None
 
-PLAIN_EXTS = {".txt", ".md", ".csv"}
+PLAIN_EXTS = {".txt", ".md", ".csv", ".json", ".rtf", ".tex", ".log"}
+MARKUP_EXTS = {".html", ".htm", ".xml", ".svg"}
 OOXML_EXTS = {".docx", ".xlsx", ".pptx"}
 
 _PATTERNS = {
@@ -40,6 +41,12 @@ def extract_text(path: str, ext: str, size: int) -> str | None:
             if raw.startswith((b"\xff\xfe", b"\xfe\xff")):
                 return raw.decode("utf-16", errors="ignore")
             return raw.decode("utf-8", errors="ignore")
+        if ext in MARKUP_EXTS:
+            with open(win_path(path), "rb") as f:
+                raw = f.read(TEXT_READ_LIMIT)
+            text = raw.decode("utf-8", errors="ignore")
+            text = re.sub(r"(?is)<(script|style)[^>]*>.*?</\1>", " ", text)
+            return re.sub(r"<[^>]+>", " ", text)
         if ext == ".pdf":
             if pypdf is None or size > PDF_MAX_BYTES:
                 return None

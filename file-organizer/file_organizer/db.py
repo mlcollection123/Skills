@@ -27,6 +27,13 @@ CREATE TABLE IF NOT EXISTS files(
 );
 CREATE INDEX IF NOT EXISTS idx_files_run_size ON files(run_id, size);
 CREATE INDEX IF NOT EXISTS idx_files_run_cat ON files(run_id, category);
+CREATE TABLE IF NOT EXISTS tokens(
+    file_id INTEGER NOT NULL,
+    tok TEXT NOT NULL,               -- canonical key (see lexicon.canon)
+    src INTEGER NOT NULL,            -- 1 file name, 2 folder name, 3 reference code, 4 text
+    w REAL NOT NULL,
+    surf TEXT                        -- original spelling, for names/folders/codes
+);
 CREATE TABLE IF NOT EXISTS hash_cache(
     path TEXT NOT NULL, algo TEXT NOT NULL, size INTEGER, mtime REAL,
     partial TEXT, "full" TEXT,
@@ -72,10 +79,14 @@ def _migrate(conn: sqlite3.Connection) -> None:
     """Add columns introduced after the first release to an existing database."""
     have = {r[1] for r in conn.execute("PRAGMA table_info(files)")}
     for col, typ in (("taken", "REAL"), ("lat", "REAL"), ("lon", "REAL"),
-                     ("country", "TEXT"), ("trip", "TEXT")):
+                     ("country", "TEXT"), ("trip", "TEXT"),
+                     ("project", "TEXT"), ("role", "TEXT"), ("status", "TEXT"), ("stem", "TEXT"),
+                     ("subfolder", "TEXT"), ("subgroup", "TEXT"), ("reason", "TEXT"),
+                     ("cluster", "INTEGER")):
         if col not in have:
             conn.execute(f"ALTER TABLE files ADD COLUMN {col} {typ}")
     conn.execute("CREATE INDEX IF NOT EXISTS idx_files_geo ON files(run_id, country, taken)")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_files_project ON files(run_id, project)")
     conn.commit()
 
 
