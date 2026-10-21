@@ -277,3 +277,37 @@ def project_names(conn, run_id: int) -> list[str]:
     return [r[0] for r in conn.execute(
         "SELECT project FROM files WHERE run_id=? AND project IS NOT NULL GROUP BY project ORDER BY COUNT(*) DESC",
         (run_id,))]
+
+
+def write_audit(conn, exec_id: int, path: str) -> str:
+    """Every action of one execution (what, from, to, result, when) as a CSV."""
+    import csv
+    with open(path, "w", newline="", encoding="utf-8-sig") as fh:
+        w = csv.writer(fh)
+        w.writerow(["time", "action", "status", "size_bytes", "source", "destination", "error"])
+        for ts, op, st, size, src, dst, err in conn.execute(
+                "SELECT ts, op, status, size, src, dst, error FROM journal WHERE exec_id=? ORDER BY id", (exec_id,)):
+            w.writerow([time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(ts)) if ts else "", op, st, size, src,
+                        dst, err or ""])
+    return path
+
+
+def fingerprint(folder: str) -> tuple[int, float]:
+    """(file count, newest modified time) of a folder tree. Cheap change detector for the watch feature."""
+    count, newest = 0, 0.0
+    stack = [folder]
+    while stack:
+        try:
+            with os.scandir(stack.pop()) as it:
+                for e in it:
+                    try:
+                        if e.is_dir(follow_symlinks=False):
+                            stack.append(e.path)
+                        elif e.is_file(follow_symlinks=False):
+                            count += 1
+                            newest = max(newest, e.stat().st_mtime)
+                    except OSError:
+                        continue
+        except OSError:
+            continue
+    return count, newest

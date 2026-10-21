@@ -593,5 +593,72 @@ class ReportTests(unittest.TestCase):
         self.assertTrue(charts.timeline([], 300, 100))
 
 
+class SortioParityTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.src, self.dst = os.path.join(self.tmp, "src"), os.path.join(self.tmp, "out")
+        self.db = os.path.join(self.tmp, "index.db")
+        os.environ["FILE_ORGANIZER_HOME"] = os.path.join(self.tmp, "home")
+        self.rep = Reporter(lambda m: None, min_interval=0)
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def targets(self):
+        conn = db.connect(self.db)
+        out = {os.path.basename(s): os.path.relpath(d, self.dst).replace("\\", "/")
+               for s, d in conn.execute("SELECT src, dst FROM plan WHERE dst IS NOT NULL")}
+        conn.close()
+        return out
+
+    def test_find_fields_in_a_bill(self):
+        from file_organizer import rename
+        text = "ACME Plumbing Ltd\nInvoice date: 14 May 2026\nPipe repair EUR 1,000.00\nTotal due: \u20ac1,240.00"
+        self.assertEqual(rename.propose_name(text, ".pdf"), "2026-05-14 ACME Plumbing Ltd \u20ac1,240.00.pdf")
+        self.assertEqual(rename.find_date("paid on 03/02/2026"), "2026-02-03")      # day first
+        self.assertIsNone(rename.propose_name("nothing useful in here", ".pdf"))
+
+    def test_smart_rename_is_opt_in_and_only_for_bills(self):
+        write(f"{self.src}/scan001.txt", "ACME Plumbing Ltd\nInvoice date: 2026-05-14\nTotal due: \u20ac99.50\n")
+        write(f"{self.src}/invoice_old.txt", "ACME Plumbing Ltd\nInvoice date: 2026-05-14\nTotal due: \u20ac99.50\n")
+        write(f"{self.src}/notes.txt", "ACME Plumbing Ltd\nInvoice date: 2026-05-14\nTotal due: \u20ac99.50\n")
+        engine.dry_run(self.db, self.src, self.dst, {"detect_dups": False}, self.rep)
+        self.assertIn("invoice_old.txt", self.targets())                    # off by default
+        engine.dry_run(self.db, self.src, self.dst, {"detect_dups": False, "smart_rename": True}, self.rep)
+        t = self.targets()
+        self.assertTrue(t["invoice_old.txt"].endswith("2026-05-14 ACME Plumbing Ltd \u20ac99.50.txt"), t)
+        self.assertTrue(t["notes.txt"].endswith("/notes.txt"), t)           # not a bill by name or role
+        self.assertTrue(t["scan001.txt"].endswith("/scan001.txt"), t)
+
+    def test_user_rule_wins_and_empty_rule_is_ignored(self):
+        from file_organizer import userrules
+        write(f"{self.src}/tax return 2025.pdf", b"x")
+        write(f"{self.src}/holiday.pdf", b"y")
+        userrules.save([{"name": "all", "to": "Everything"},
+                        {"name": "Tax", "name_contains": ["tax"], "ext": ["pdf"], "to": "Finance/Tax/{year}"}])
+        engine.dry_run(self.db, self.src, self.dst, {"detect_dups": False}, self.rep)
+        t = self.targets()
+        self.assertRegex(t["tax return 2025.pdf"], r"^Finance/Tax/\d{4}/")
+        self.assertNotIn("Everything", t["holiday.pdf"])
+
+    def test_rule_cannot_escape_destination(self):
+        from file_organizer import userrules
+        rules = userrules.compile_rules([{"name": "x", "ext": ["pdf"], "to": "../../etc"}])
+        hit = userrules.match(rules, "a.pdf", ".pdf", 1, 0, "Documents")
+        self.assertNotIn("..", hit[1].split(os.sep))
+        self.assertFalse(os.path.isabs(hit[1]))
+
+    def test_audit_log_and_fingerprint(self):
+        from file_organizer import report
+        write(f"{self.src}/a.txt", "a")
+        engine.dry_run(self.db, self.src, self.dst, {}, self.rep)
+        res = engine.execute(self.db, self.src, self.dst, "copy", {}, self.rep)
+        self.assertTrue(os.path.exists(res["audit_csv"]))
+        self.assertIn("a.txt", open(res["audit_csv"], encoding="utf-8-sig").read())
+        fp = report.fingerprint(self.src)
+        write(f"{self.src}/b.txt", "b")
+        self.assertNotEqual(report.fingerprint(self.src), fp)
+
+
 if __name__ == "__main__":
     unittest.main()

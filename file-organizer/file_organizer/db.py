@@ -82,7 +82,7 @@ def _migrate(conn: sqlite3.Connection) -> None:
                      ("country", "TEXT"), ("trip", "TEXT"),
                      ("project", "TEXT"), ("role", "TEXT"), ("status", "TEXT"), ("stem", "TEXT"),
                      ("subfolder", "TEXT"), ("subgroup", "TEXT"), ("reason", "TEXT"),
-                     ("cluster", "INTEGER"), ("sib", "TEXT")):
+                     ("cluster", "INTEGER"), ("sib", "TEXT"), ("newname", "TEXT")):
         if col not in have:
             conn.execute(f"ALTER TABLE files ADD COLUMN {col} {typ}")
     conn.execute("CREATE INDEX IF NOT EXISTS idx_files_geo ON files(run_id, country, taken)")

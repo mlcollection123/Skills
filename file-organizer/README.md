@@ -48,12 +48,25 @@ To build the .exe yourself on a Windows PC, double-click `build_exe.bat`.
 | Organize | Source and destination, Analyze / Execute / Undo / Cancel, a live progress ring with files per second. |
 | Insights | Totals, a donut of where files will go, projects and trips as bar charts, a photo and video timeline, and plain-language findings with tips. |
 | Review | Every planned move in a searchable table. Filter by project, page through the list. |
+| Rules | Your own if-then rules (file name contains, file type, size) that send files to a folder you choose, for example `Finance/Tax/{year}`. They win over automatic sorting; an empty rule is refused so it cannot grab everything. |
 | Settings | Smart sorting switches, **My name(s)**, **Home country**, duplicate and safety options. Saved automatically. |
 | Activity | The live log. |
 
 The HTML report is one self-contained file (no internet, no external scripts). It holds the same charts plus a
 searchable table of up to 20,000 files; the CSV always has all of them. Set **My name(s)** so your own name never
 becomes a project folder, and **Home country** so photos from home are events, not trips.
+
+## Extras
+
+- **Smart rename** (Settings, off by default). For bills, invoices and receipts it reads the text and proposes
+  `2026-05-14 ACME Plumbing Ltd 1,240.00.pdf`. A new name is used only when a date and a vendor or amount are found.
+  Dates such as `03/02/2026` are read day first. The preview shows every rename before anything happens, and Undo
+  restores the old name. Scans with no text layer keep their own name.
+- **Watch folder** (Organize page). Every 5 to 60 minutes it checks whether the source folder changed and, if so,
+  runs a new Analyze. It never executes by itself.
+- **Audit log.** Each execution writes `execution_N_audit_<time>.csv` to the reports folder: time, action, result,
+  source and destination of every file.
+- **Your rules** live in `%LOCALAPPDATA%\FileOrganizer\sort_rules.json` if you prefer to edit them by hand.
 
 ## What it does
 

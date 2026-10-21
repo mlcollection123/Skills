@@ -9,7 +9,7 @@ import time
 
 from .common import Reporter, human_size, win_path
 from .config import CATEGORY_DOCUMENTS, CATEGORY_EXEC, KEYSET_BATCH
-from . import photos
+from . import photos, userrules
 from .db import iter_batches
 
 _BAD = re.compile(r'[<>:"/\\|?*\x00-\x1f]')
@@ -47,9 +47,9 @@ def target_subdir(category: str, subcategory: str | None, ext: str, is_dup: bool
     return os.path.join(*parts)
 
 
-def _insert_unique(conn, run_id, file_id, src, dest_root, rel_dir, size, mtime) -> str:
+def _insert_unique(conn, run_id, file_id, src, dest_root, rel_dir, size, mtime, newname: str | None = None) -> str:
     """Insert a plan row with a destination name that is unique in this plan and on disk."""
-    name = os.path.basename(src)
+    name = newname or os.path.basename(src)
     stem, ext = os.path.splitext(name)
     n = 0
     while True:
@@ -75,13 +75,14 @@ def build_plan(conn, run_id: int, dest: str, include_exec: bool, segregate_dups:
     scan_root = conn.execute("SELECT source FROM runs WHERE id=?", (run_id,)).fetchone()[0]
     total = conn.execute("SELECT COUNT(*) FROM files WHERE run_id=?", (run_id,)).fetchone()[0]
     sql = ("SELECT id, path, ext, size, mtime, category, subcategory, is_dup, taken, trip, "
-           "project, role, status, subgroup FROM files "
+           "project, role, status, subgroup, newname FROM files "
            "WHERE run_id=? AND id>? ORDER BY id LIMIT ?")
-    done = planned = skipped = 0
+    rules = userrules.compile_rules(userrules.load())
+    done = planned = skipped = ruled = 0
     for rows in iter_batches(conn, sql, (run_id,), KEYSET_BATCH):
         rep.check()
         for (fid, path, ext, size, mtime, cat, sub, is_dup, taken, trip,
-                 project, role, status, subgroup) in rows:
+                 project, role, status, subgroup, newname) in rows:
             if cat == CATEGORY_EXEC and not include_exec:
                 conn.execute(
                     "INSERT INTO plan(run_id, file_id, src, size, mtime, status, reason) "
@@ -90,16 +91,23 @@ def build_plan(conn, run_id: int, dest: str, include_exec: bool, segregate_dups:
                      "executable/system file: flagged for cleanup review, left in place"))
                 skipped += 1
             else:
-                rel = target_subdir(cat, sub, ext, bool(is_dup), segregate_dups, path=path,
-                                    taken=taken if smart_photos else None, trip=trip,
-                                    project=project, role=role, status=status, subgroup=subgroup, root=scan_root)
-                _insert_unique(conn, run_id, fid, path, dest_root, rel, size, mtime)
+                hit = userrules.match(rules, path, ext, size, mtime, cat)
+                if hit:
+                    rel = os.path.join("_Duplicates", hit[1]) if (is_dup and segregate_dups) else hit[1]
+                    conn.execute("UPDATE files SET project=NULL, role=NULL, reason=? WHERE id=?",
+                                 (f"your rule: {hit[0]}", fid))
+                    ruled += 1
+                else:
+                    rel = target_subdir(cat, sub, ext, bool(is_dup), segregate_dups, path=path,
+                                        taken=taken if smart_photos else None, trip=trip,
+                                        project=project, role=role, status=status, subgroup=subgroup, root=scan_root)
+                _insert_unique(conn, run_id, fid, path, dest_root, rel, size, mtime, newname)
                 planned += 1
         conn.commit()
         done += len(rows)
         rep.progress("Building plan", done, total)
     rep.progress("Building plan", done, total, force=True)
-    return {"planned": planned, "skipped": skipped}
+    return {"planned": planned, "skipped": skipped, "ruled": ruled}
 
 
 def summarize(conn, run_id: int) -> dict:

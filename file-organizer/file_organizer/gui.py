@@ -13,7 +13,7 @@ from tkinter import filedialog, messagebox, ttk
 
 import customtkinter as ctk
 
-from . import charts, db, engine, report
+from . import charts, db, engine, report, userrules
 from .common import Cancelled, Reporter, human_size
 from .config import HASH_WORKERS, app_dir, db_path, report_dir
 
@@ -23,9 +23,9 @@ FONT = "Segoe UI"
 MODES = {"Copy": "copy", "Move": "move", "Symlink": "symlink"}
 MAX_LOG_CHARS = 400_000
 PAGE_ROWS = 200
-NAV = ["Organize", "Insights", "Review", "Settings", "Activity"]
+NAV = ["Organize", "Insights", "Review", "Rules", "Settings", "Activity"]
 SETTINGS_KEYS = ("src", "dst", "mode", "include_exec", "segregate", "detect_dups", "read_content", "group_projects",
-                 "smart_photos", "my_names", "home", "verify", "algo", "workers")
+                 "smart_photos", "smart_rename", "watch", "watch_min", "my_names", "home", "verify", "algo", "workers")
 
 
 def _settings_file() -> str:
@@ -63,6 +63,10 @@ class App(ctk.CTk):
         self.group_projects, self.smart_photos = tk.BooleanVar(value=True), tk.BooleanVar(value=True)
         self.my_names, self.home = tk.StringVar(), tk.StringVar()
         self.verify = tk.BooleanVar(value=False)
+        self.smart_rename, self.watch = tk.BooleanVar(value=False), tk.BooleanVar(value=False)
+        self.watch_min = tk.IntVar(value=15)
+        self._watch_fp = None
+        self._watch_last = 0.0
         self.algo = tk.StringVar(value="sha256")
         self.workers = tk.IntVar(value=HASH_WORKERS)
         self._load_settings()
@@ -75,6 +79,7 @@ class App(ctk.CTk):
         self.protocol("WM_DELETE_WINDOW", self._on_close)
         self.show("Organize")
         self.after(100, self._poll)
+        self.after(30000, self._watch_tick)
         self._refresh_buttons()
         self._log("Ready. Pick a source and destination, then press Analyze. Nothing changes until you press Execute.")
         self._find_latest_report()
@@ -85,6 +90,7 @@ class App(ctk.CTk):
         return {"src": self.src, "dst": self.dst, "mode": self.mode, "include_exec": self.include_exec,
                 "segregate": self.segregate, "detect_dups": self.detect_dups, "read_content": self.read_content,
                 "group_projects": self.group_projects, "smart_photos": self.smart_photos,
+                "smart_rename": self.smart_rename, "watch": self.watch, "watch_min": self.watch_min,
                 "my_names": self.my_names, "home": self.home, "verify": self.verify, "algo": self.algo,
                 "workers": self.workers}
 
@@ -172,7 +178,7 @@ class App(ctk.CTk):
         colors = {"primary": (ACCENT, "#6a79ee", "#ffffff"), "ghost": ("#1d2547", "#27315a", TEXT),
                   "go": ("#1f6f64", "#27877a", "#ffffff"), "danger": ("#4a2430", "#63303f", "#ffd6d6")}[kind]
         return ctk.CTkButton(parent, text=text, command=command, fg_color=colors[0], hover_color=colors[1],
-                             text_color=colors[2], corner_radius=12, height=40, font=(FONT, 13, "bold"), **kw)
+                             text_color=colors[2], corner_radius=12, font=(FONT, 13, "bold"), **{"height": 40, **kw})
 
     def _img(self, label: ctk.CTkLabel, key: str, pil, size: tuple[int, int]) -> None:
         img = ctk.CTkImage(light_image=pil, dark_image=pil, size=size)
@@ -209,6 +215,16 @@ class App(ctk.CTk):
                                      unselected_color=PANEL, unselected_hover_color="#1d2547", font=(FONT, 12, "bold"))
         seg.pack(side="right")
         ctk.CTkLabel(row, text="On execute:", font=(FONT, 12), text_color=MUTED).pack(side="right", padx=10)
+        watch = ctk.CTkFrame(page, fg_color="transparent", height=1)
+        watch.pack(fill="x", pady=(0, 12))
+        ctk.CTkSwitch(watch, text="Watch the source folder", variable=self.watch, progress_color=ACCENT,
+                      button_color="#ffffff", font=(FONT, 12), text_color=TEXT).pack(side="left")
+        ctk.CTkLabel(watch, text="  re-analyze when files change, every", font=(FONT, 12), text_color=MUTED).pack(side="left")
+        ctk.CTkOptionMenu(watch, variable=tk.StringVar(value=str(self.watch_min.get())), width=70, height=28,
+                          values=["5", "15", "30", "60"], fg_color=PANEL, button_color="#1d2547",
+                          button_hover_color="#27315a", command=lambda v: self.watch_min.set(int(v))).pack(side="left", padx=6)
+        ctk.CTkLabel(watch, text="minutes. It only analyzes; you still press Execute.", font=(FONT, 12),
+                     text_color=MUTED).pack(side="left")
 
         prog = self._card(page)
         prog.pack(fill="both", expand=True)
@@ -434,6 +450,87 @@ class App(ctk.CTk):
         self.review_page = max(0, self.review_page + step)
         self._review_refresh(keep_projects=True)
 
+    # ------------------------------------------------------------------------------ page: rules
+    def _page_rules(self) -> ctk.CTkFrame:
+        page = ctk.CTkFrame(self.body, fg_color="transparent")
+        self._title(page, "Rules", "Your own if-then rules. They win over automatic sorting. The first match is used.")
+        form = self._card(page)
+        form.pack(fill="x")
+        self.rule_fields: dict[str, ctk.CTkEntry] = {}
+        spec = (("name", "Rule name", "Tax papers", 160), ("name_contains", "File name contains", "tax, vat", 180),
+                ("ext", "File type", "pdf, docx", 120), ("larger_than_mb", "Larger than (MB)", "0", 110),
+                ("to", "Move to folder", "Finance/Tax/{year}", 230))
+        grid = ctk.CTkFrame(form, fg_color="transparent")
+        grid.pack(fill="x", padx=18, pady=(16, 6))
+        for i, (key, label, ph, w) in enumerate(spec):
+            ctk.CTkLabel(grid, text=label, font=(FONT, 11), text_color=MUTED).grid(row=0, column=i, sticky="w", padx=(0, 10))
+            e = ctk.CTkEntry(grid, placeholder_text=ph, width=w, height=36, corner_radius=10, fg_color=PANEL,
+                             border_color=LINE, font=(FONT, 12))
+            e.grid(row=1, column=i, padx=(0, 10), sticky="w")
+            self.rule_fields[key] = e
+        foot = ctk.CTkFrame(form, fg_color="transparent", height=1)
+        foot.pack(fill="x", padx=18, pady=(4, 16))
+        ctk.CTkLabel(foot, text="Words and types are comma separated. In the folder you can use {year} {month} {ext}.",
+                     font=(FONT, 11), text_color=MUTED).pack(side="left")
+        self._button(foot, "Add rule", self._rule_add, "primary", width=110).pack(side="right")
+        self.rule_list = ctk.CTkScrollableFrame(page, fg_color="transparent", corner_radius=0)
+        self.rule_list.pack(fill="both", expand=True, pady=(12, 0))
+        self._rules_draw()
+        return page
+
+    def _rules_draw(self) -> None:
+        for w in self.rule_list.winfo_children():
+            w.destroy()
+        rules = userrules.load()
+        if not rules:
+            ctk.CTkLabel(self.rule_list, text="No rules yet. Example: file name contains 'tax' and type pdf, "
+                         "move to Finance/Tax/{year}.", font=(FONT, 12), text_color=MUTED).pack(anchor="w", pady=10)
+        for i, r in enumerate(rules):
+            row = self._card(self.rule_list)
+            row.pack(fill="x", pady=4)
+            conds = []
+            if r.get("name_contains"):
+                conds.append("name has " + " or ".join(r["name_contains"]))
+            if r.get("ext"):
+                conds.append("type " + " or ".join(r["ext"]))
+            if r.get("larger_than_mb"):
+                conds.append(f"over {r['larger_than_mb']} MB")
+            ctk.CTkLabel(row, text=r.get("name") or r["to"], font=(FONT, 13, "bold"), text_color=TEXT).pack(
+                side="left", padx=(16, 12), pady=14)
+            ctk.CTkLabel(row, text="  and  ".join(conds) + "   \u2192   " + r["to"], font=(FONT, 12),
+                         text_color=MUTED).pack(side="left")
+            self._button(row, "Delete", lambda n=i: self._rule_delete(n), "danger", width=80, height=30).pack(
+                side="right", padx=14)
+
+    def _rule_add(self) -> None:
+        f = {k: e.get().strip() for k, e in self.rule_fields.items()}
+        if not f["to"]:
+            messagebox.showinfo("Rule needs a folder", "Type the folder files should go to.")
+            return
+        rule = {"name": f["name"] or f["to"], "to": f["to"],
+                "name_contains": [x.strip() for x in f["name_contains"].split(",") if x.strip()],
+                "ext": [x.strip() for x in f["ext"].split(",") if x.strip()]}
+        try:
+            mb = float(f["larger_than_mb"] or 0)
+        except ValueError:
+            messagebox.showinfo("Size", "Larger than must be a number of MB.")
+            return
+        if mb:
+            rule["larger_than_mb"] = mb
+        if not (rule["name_contains"] or rule["ext"] or mb):
+            messagebox.showinfo("Rule is empty", "Add a file name word, a file type or a size, or the rule would match everything.")
+            return
+        userrules.save(userrules.load() + [rule])
+        for e in self.rule_fields.values():
+            e.delete(0, "end")
+        self._rules_draw()
+
+    def _rule_delete(self, n: int) -> None:
+        rules = userrules.load()
+        if 0 <= n < len(rules):
+            userrules.save(rules[:n] + rules[n + 1:])
+        self._rules_draw()
+
     # ---------------------------------------------------------------------------- page: settings
     def _page_settings(self) -> ctk.CTkFrame:
         page = ctk.CTkFrame(self.body, fg_color="transparent")
@@ -452,7 +549,9 @@ class App(ctk.CTk):
         card = section("Smart sorting")
         for text, var in (("Group related files into project folders", self.group_projects),
                           ("Smart photo folders (trips, events, dates)", self.smart_photos),
-                          ("Read inside documents for keywords", self.read_content)):
+                          ("Read inside documents for keywords", self.read_content),
+                          ("Rename bills and receipts to date, vendor, amount (shown in the preview first)",
+                           self.smart_rename)):
             ctk.CTkSwitch(card, text=text, variable=var, **sw).pack(anchor="w", padx=20, pady=8)
         card = section("About you")
         for r, (label, var, ph, w) in enumerate((
@@ -530,6 +629,7 @@ class App(ctk.CTk):
             "include_exec": self.include_exec.get(), "segregate_dups": self.segregate.get(),
             "detect_dups": self.detect_dups.get(), "read_content": self.read_content.get(),
             "group_projects": self.group_projects.get(), "smart_photos": self.smart_photos.get(),
+            "smart_rename": self.smart_rename.get(),
             "my_names": self.my_names.get().strip(), "home_country": self.home.get().strip().upper(),
             "hash_algo": self.algo.get(), "verify": self.verify.get(),
             "workers": max(1, int(self.workers.get() or 1)),
@@ -599,8 +699,10 @@ class App(ctk.CTk):
         self.chip.configure(text=f"Running: {name}", text_color=MINT)
         self._refresh_buttons()
 
-    def on_dry_run(self) -> None:
+    def on_dry_run(self, quiet: bool = False) -> None:
         err = engine.validate_paths(self.src.get(), self.dst.get())
+        if err and quiet:
+            return
         if err:
             messagebox.showerror("Cannot start", err)
             return
@@ -662,6 +764,8 @@ class App(ctk.CTk):
         for msg in finished:
             if msg[0] == "insights":
                 self._fill_insights(msg[1])
+            elif msg[0] == "fingerprint":
+                self._on_fingerprint(msg[1], msg[2])
             else:
                 self._on_finished(msg)
         if self.closing and not self._busy():
@@ -669,6 +773,24 @@ class App(ctk.CTk):
             self.destroy()
             return
         self.after(100, self._poll)
+
+    def _watch_tick(self) -> None:
+        self.after(30000, self._watch_tick)
+        src = self.src.get()
+        if (not self.watch.get() or self._busy() or not src or not os.path.isdir(src)
+                or time.monotonic() - self._watch_last < max(1, self.watch_min.get()) * 60):
+            return
+        self._watch_last = time.monotonic()
+
+        def run() -> None:
+            self.q.put(("fingerprint", src, report.fingerprint(src)))
+        threading.Thread(target=run, daemon=True).start()
+
+    def _on_fingerprint(self, src: str, fp: tuple) -> None:
+        old, self._watch_fp = self._watch_fp, (src, fp)
+        if old is not None and old != self._watch_fp and not self._busy() and not engine.validate_paths(src, self.dst.get()):
+            self._log("Watch: the source folder changed, analyzing again.")
+            self.on_dry_run(quiet=True)
 
     def _show_progress(self, phase: str, done: int, total: int | None) -> None:
         now = time.monotonic()
@@ -714,7 +836,7 @@ class App(ctk.CTk):
                 self._load_insights()
                 self.review_run = None
             else:
-                self.detail_lbl.configure(text="Done. Use 'Undo last' to revert if needed.")
+                self.detail_lbl.configure(text="Done. Use 'Undo last' to revert. Audit log: " + (res.get("audit_csv") or "-"))
         self.worker = None
         self.chip.configure(text="Idle", text_color=MUTED)
         self._refresh_buttons()

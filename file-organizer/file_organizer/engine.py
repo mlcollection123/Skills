@@ -5,7 +5,7 @@ import json
 import os
 import time
 
-from . import analyzer, db, executor, photos, planner, projects, report, scanner
+from . import analyzer, db, executor, photos, planner, projects, rename, report, scanner, userrules
 from .common import Cancelled, Reporter, human_size, is_inside, norm
 from .config import HASH_WORKERS, report_dir
 
@@ -18,6 +18,7 @@ DEFAULT_OPTS = {
     "smart_photos": True,      # photo folders from EXIF date + GPS (trips, events, year-month)
     "my_names": "",            # comma separated names that must never become a project, e.g. "John Smith"
     "home_country": "",        # ISO code, e.g. "GB": photos taken at home are not called trips
+    "smart_rename": False,     # name bills and receipts "2026-05-14 Vendor 1,240.00.pdf" (shown in the preview first)
     "hash_algo": "sha256",     # or "md5" (faster, fine for spotting duplicates)
     "workers": HASH_WORKERS,
     "verify": False,           # re-hash every copied file after copying (slow, thorough)
@@ -101,6 +102,8 @@ def dry_run(db_path: str, src: str, dest: str, opts: dict | None, rep: Reporter)
                     + ".")
         else:
             subs = analyzer.classify_documents(conn, run_id, rep, opts["workers"], opts["read_content"])
+        if counts_hint := userrules.load():
+            rep.log(f"Applying your {len(counts_hint)} sorting rules.")
         if subs:
             rep.log("Document sub-categories: " + ", ".join(f"{k}={v:,}" for k, v in subs.items()))
         dup = {"duplicate_files": 0, "duplicate_groups": 0, "wasted_bytes": 0}
@@ -108,12 +111,16 @@ def dry_run(db_path: str, src: str, dest: str, opts: dict | None, rep: Reporter)
             dup = analyzer.find_duplicates(conn, run_id, opts["hash_algo"], opts["workers"], rep)
             rep.log(f"Duplicates: {dup['duplicate_files']:,} extra copies in {dup['duplicate_groups']:,} "
                     f"groups, wasting {human_size(dup['wasted_bytes'])}.")
+        renamed = 0
+        if opts["smart_rename"]:
+            renamed = rename.propose_all(conn, run_id, rep, opts["workers"])
+            rep.log(f"Smart rename: {renamed:,} bills and receipts get a new name (see the preview).")
         counts = planner.build_plan(conn, run_id, dest, opts["include_exec"], opts["segregate_dups"], rep,
                                     opts["smart_photos"])
         csv_path, txt_path = planner.write_report(conn, run_id, report_dir(), src, dest)
         html_path = report.write_html(conn, run_id, os.path.splitext(csv_path)[0] + ".html")
         summary = {"files": stats.files, "bytes": stats.bytes, **dup, **counts,
-                   "projects": grouping["projects"], "grouped": grouping["grouped"],
+                   "projects": grouping["projects"], "grouped": grouping["grouped"], "renamed": renamed,
                    "report_csv": csv_path, "report_txt": txt_path, "report_html": html_path,
                    "seconds": round(time.monotonic() - t0, 1)}
         db.finish_run(conn, run_id, "complete", summary)
@@ -157,6 +164,11 @@ def execute(db_path: str, src: str, dest: str, mode: str, opts: dict | None, rep
             raise RuntimeError("No completed dry run for this source and destination. "
                                "Run a dry run first.")
         result = executor.execute_plan(conn, rid, mode, opts["verify"], rep)
+        ex = conn.execute("SELECT MAX(id) FROM runs WHERE kind='execute'").fetchone()[0]
+        if ex:
+            audit = os.path.join(report_dir(), f"execution_{ex}_audit_{time.strftime('%Y%m%d_%H%M%S')}.csv")
+            result["audit_csv"] = report.write_audit(conn, ex, audit)
+            rep.log(f"Audit log: {audit}")
         rep.log(f"Finished ({result['status']}): {result['done']:,} done, {result['failed']:,} failed, "
                 f"{result['changed']:,} skipped because the source changed.")
         return result
