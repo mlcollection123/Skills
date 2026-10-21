@@ -22,7 +22,7 @@ from file_organizer.common import Cancelled, Reporter  # noqa: E402
 def write(path: str, data: bytes | str = b"x") -> str:
     os.makedirs(os.path.dirname(path), exist_ok=True)
     mode = "wb" if isinstance(data, bytes) else "w"
-    with open(path, mode) as f:
+    with open(path, mode, **({} if mode == "wb" else {"encoding": "utf-8"})) as f:
         f.write(data)
     return path
 

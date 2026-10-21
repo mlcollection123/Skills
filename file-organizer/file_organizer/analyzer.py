@@ -32,6 +32,14 @@ _PATTERNS = {
 
 
 # ---------------------------------------------------------------- document text -------------
+def _decode(raw: bytes) -> str:
+    """UTF-8 first; older Windows Notepad files are ANSI (cp1252), which would otherwise lose symbols like the euro."""
+    try:
+        return raw.decode("utf-8")
+    except UnicodeDecodeError:
+        return raw.decode("cp1252", errors="ignore")
+
+
 def extract_text(path: str, ext: str, size: int) -> str | None:
     """Best-effort text from the start of a document; None if unsupported or unreadable."""
     try:
@@ -40,11 +48,11 @@ def extract_text(path: str, ext: str, size: int) -> str | None:
                 raw = f.read(TEXT_READ_LIMIT)
             if raw.startswith((b"\xff\xfe", b"\xfe\xff")):
                 return raw.decode("utf-16", errors="ignore")
-            return raw.decode("utf-8", errors="ignore")
+            return _decode(raw)
         if ext in MARKUP_EXTS:
             with open(win_path(path), "rb") as f:
                 raw = f.read(TEXT_READ_LIMIT)
-            text = raw.decode("utf-8", errors="ignore")
+            text = _decode(raw)
             text = re.sub(r"(?is)<(script|style)[^>]*>.*?</\1>", " ", text)
             return re.sub(r"<[^>]+>", " ", text)
         if ext == ".pdf":
