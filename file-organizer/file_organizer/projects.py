@@ -43,14 +43,16 @@ def rules_path() -> str:
     return os.path.join(app_dir(), "projects.json")
 
 
-def load_ignore() -> set[str]:
-    """Words that must never link files, e.g. your own name. In projects.json: {"ignore": ["john"]}."""
+def load_ignore(extra: str = "") -> set[str]:
+    """Words that must never link files, e.g. your own name. In projects.json: {"ignore": ["john"]}.
+    `extra` is a comma separated list from the app's "My name" setting."""
     try:
         with open(rules_path(), encoding="utf-8") as fh:
             raw = json.load(fh)
     except (OSError, ValueError):
-        return set()
-    return {k for a in raw.get("ignore", []) for k in (lexicon.canon(w) for w in lexicon.words(str(a))) if k}
+        raw = {}
+    listed = list(raw.get("ignore", [])) + [x for x in re.split(r"[,;]", extra or "") if x.strip()]
+    return {k for a in listed for k in (lexicon.canon(w) for w in lexicon.words(str(a))) if k}
 
 
 def load_rules() -> dict[str, list[str]]:
@@ -180,7 +182,8 @@ def _role(name_keys, text_counts, ext) -> str | None:
 
 
 # ---------------------------------------------------------------------------- index pass
-def index_files(conn, run_id: int, root: str, rep: Reporter, workers: int, read_content: bool) -> dict:
+def index_files(conn, run_id: int, root: str, rep: Reporter, workers: int, read_content: bool,
+                my_names: str = "") -> dict:
     """Two passes. 1: names, folders and codes of every eligible file (no file is opened).
     2: text inside documents, keeping any word that matches a name several files share."""
     conn.execute("DROP INDEX IF EXISTS idx_tokens_tok")
@@ -190,7 +193,7 @@ def index_files(conn, run_id: int, root: str, rep: Reporter, workers: int, read_
     root = os.path.abspath(root)
     where = "run_id=? AND cleanup=0 AND taken IS NULL"
     total = conn.execute(f"SELECT COUNT(*) FROM files WHERE {where}", (run_id,)).fetchone()[0]
-    ignore = load_ignore()
+    ignore = load_ignore(my_names)
 
     def drop_ignored(toks):
         return [t for t in toks if t[0] not in ignore] if ignore else toks

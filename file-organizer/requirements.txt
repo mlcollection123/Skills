@@ -1,6 +1,7 @@
 # pypdf: text inside searchable PDFs.  Pillow: photo dates and GPS.
 # geonamescache: offline town/country table for trip names (pure Python, no internet needed).
 # pillow-heif (optional, add yourself): lets Pillow read iPhone .heic photos.
+customtkinter>=5.2
 pypdf>=4.0
 Pillow>=10.0
 geonamescache>=1.6

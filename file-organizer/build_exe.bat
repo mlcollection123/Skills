@@ -9,7 +9,7 @@ python -m pip install --upgrade pip || goto :fail
 pip install -r requirements.txt pillow-heif pyinstaller || goto :fail
 python -m unittest discover -s tests || goto :fail
 pyinstaller --noconfirm --clean --windowed --name FileOrganizer ^
-  --collect-data geonamescache --collect-all pillow_heif run_organizer.py || goto :fail
+  --collect-data geonamescache --collect-all customtkinter --collect-all pillow_heif run_organizer.py || goto :fail
 set ISCC="%ProgramFiles(x86)%\Inno Setup 6\ISCC.exe"
 if exist %ISCC% (
   %ISCC% installer.iss || goto :fail

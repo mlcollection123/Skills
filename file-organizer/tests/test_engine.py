@@ -537,5 +537,61 @@ class RealDriveLayoutTests(unittest.TestCase):
         self.assertEqual(lexicon.codes("GOPR1234"), set())
 
 
+class ReportTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.src, self.dst = os.path.join(self.tmp, "src"), os.path.join(self.tmp, "out")
+        self.db = os.path.join(self.tmp, "index.db")
+        os.environ["FILE_ORGANIZER_HOME"] = os.path.join(self.tmp, "home")
+        for i in range(4):
+            write(f"{self.src}/Birch Farm/birch farm invoice {i}.txt", f"birch {i}")
+        for i in range(3):
+            make_photo(f"{self.src}/pics/IMG_{i}.jpg", f"2025:05:0{i + 1} 10:00:00", (52.52, 13.40), i)
+        write(f"{self.src}/a.txt", "same")
+        write(f"{self.src}/b.txt", "same")
+        engine.dry_run(self.db, self.src, self.dst, {}, Reporter(lambda m: None, min_interval=0))
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_report_numbers_and_html(self):
+        from file_organizer import report
+        conn = db.connect(self.db)
+        rid = report.latest_dry_run(conn)
+        d = report.build_report(conn, rid)
+        self.assertEqual(d["totals"]["files"], 9)
+        self.assertEqual(d["totals"]["duplicates"], 1)
+        self.assertEqual([p["label"] for p in d["projects"]], ["Birch Farm"])
+        self.assertEqual(d["totals"]["trips"], 1)
+        self.assertEqual(sum(m["photos"] for m in d["months"]), 3)
+        self.assertTrue(any(i["kind"] == "tip" for i in d["insights"]))
+        path = report.write_html(conn, rid, os.path.join(self.tmp, "r.html"))
+        html = open(path, encoding="utf-8").read()
+        self.assertIn("Birch Farm", html)
+        self.assertNotIn("</script><script>alert", html)
+        rows, total = report.query_rows(conn, rid, self.dst, "invoice", "Birch Farm")
+        self.assertEqual((len(rows), total), (4, 4))
+        self.assertFalse(os.path.isabs(rows[0][0]))
+        conn.close()
+
+    def test_my_names_never_become_a_project(self):
+        for i in range(4):
+            write(f"{self.src}/Jo Bloggs/jo bloggs passport {i}.txt", f"jo {i}")
+        engine.dry_run(self.db, self.src, self.dst, {"my_names": "Jo Bloggs"}, Reporter(lambda m: None, min_interval=0))
+        conn = db.connect(self.db)
+        names = {r[0] for r in conn.execute("SELECT DISTINCT project FROM files WHERE project IS NOT NULL "
+                                            "AND run_id=(SELECT MAX(id) FROM runs)")}
+        conn.close()
+        self.assertEqual(names, {"Birch Farm"})
+
+    def test_charts_render(self):
+        from file_organizer import charts
+        for img, size in ((charts.donut([("a", 3), ("b", 1)], 100, 14, "4", "files"), 100),
+                          (charts.ring(0.5, 100, 10, "50%", "x"), 100)):
+            self.assertEqual(img.size, (size * charts.OUT, size * charts.OUT))
+        self.assertEqual(charts.hbars([("x", 5, "5")], 200, 30, 80).size, (200 * charts.OUT, 30 * charts.OUT))
+        self.assertTrue(charts.timeline([], 300, 100))
+
+
 if __name__ == "__main__":
     unittest.main()

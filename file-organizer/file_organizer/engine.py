@@ -5,7 +5,7 @@ import json
 import os
 import time
 
-from . import analyzer, db, executor, photos, planner, projects, scanner
+from . import analyzer, db, executor, photos, planner, projects, report, scanner
 from .common import Cancelled, Reporter, human_size, is_inside, norm
 from .config import HASH_WORKERS, report_dir
 
@@ -16,6 +16,7 @@ DEFAULT_OPTS = {
     "read_content": True,      # peek inside txt/md/csv/pdf/docx/xlsx/pptx for keywords
     "group_projects": True,    # link files that belong together into project folders (names, folders, text)
     "smart_photos": True,      # photo folders from EXIF date + GPS (trips, events, year-month)
+    "my_names": "",            # comma separated names that must never become a project, e.g. "John Smith"
     "home_country": "",        # ISO code, e.g. "GB": photos taken at home are not called trips
     "hash_algo": "sha256",     # or "md5" (faster, fine for spotting duplicates)
     "workers": HASH_WORKERS,
@@ -91,7 +92,8 @@ def dry_run(db_path: str, src: str, dest: str, opts: dict | None, rep: Reporter)
                         f"{ph['with_gps']:,} with GPS, {len(ph['trips'])} trips found.")
         grouping = {"projects": 0, "grouped": 0}
         if opts["group_projects"]:
-            idx = projects.index_files(conn, run_id, src, rep, opts["workers"], opts["read_content"])
+            idx = projects.index_files(conn, run_id, src, rep, opts["workers"], opts["read_content"],
+                                      opts["my_names"])
             subs = idx["subcategories"]
             grouping = projects.discover(conn, run_id, idx["indexed"], rep)
             rep.log(f"Projects: {grouping['grouped']:,} files grouped into {grouping['projects']} project "
@@ -109,9 +111,10 @@ def dry_run(db_path: str, src: str, dest: str, opts: dict | None, rep: Reporter)
         counts = planner.build_plan(conn, run_id, dest, opts["include_exec"], opts["segregate_dups"], rep,
                                     opts["smart_photos"])
         csv_path, txt_path = planner.write_report(conn, run_id, report_dir(), src, dest)
+        html_path = report.write_html(conn, run_id, os.path.splitext(csv_path)[0] + ".html")
         summary = {"files": stats.files, "bytes": stats.bytes, **dup, **counts,
                    "projects": grouping["projects"], "grouped": grouping["grouped"],
-                   "report_csv": csv_path, "report_txt": txt_path,
+                   "report_csv": csv_path, "report_txt": txt_path, "report_html": html_path,
                    "seconds": round(time.monotonic() - t0, 1)}
         db.finish_run(conn, run_id, "complete", summary)
         _drop_old_dry_runs(conn, run_id, src, dest)

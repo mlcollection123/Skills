@@ -34,12 +34,26 @@ To build the .exe yourself on a Windows PC, double-click `build_exe.bat`.
 ## Your first run: do it on a small folder
 
 1. Pick a **small test folder** (a few hundred files) as Source and an **empty folder on another drive** as Destination.
-2. Press **Run Dry Run**. Nothing is copied, moved or linked. It writes a preview to
-   `%LOCALAPPDATA%\FileOrganizer\reports\` (a CSV you can open in Excel, plus a text summary).
-3. Read the CSV: every file, where it would go, duplicates, and which executables are flagged.
-4. Choose **Copy (keep originals)** and press **Execute Sorting**. Check the result.
-5. Press **Undo Last Run** and confirm the destination is cleaned up and the source is untouched.
+2. Press **Analyze**. Nothing is copied, moved or linked. It writes a preview to
+   `%LOCALAPPDATA%\FileOrganizer\reports\`: an HTML report, a CSV you can open in Excel, and a text summary.
+3. Open **Insights** for charts, **Review** to search every planned move, or **Open full report** for the HTML page.
+4. Choose **Copy** and press **Execute**. Check the result.
+5. Press **Undo last** and confirm the destination is cleaned up and the source is untouched.
 6. Only then point it at the big folder. Keep using **Copy** first; **Move** is the last step, not the first.
+
+## The dashboard
+
+| Page | What it shows |
+|---|---|
+| Organize | Source and destination, Analyze / Execute / Undo / Cancel, a live progress ring with files per second. |
+| Insights | Totals, a donut of where files will go, projects and trips as bar charts, a photo and video timeline, and plain-language findings with tips. |
+| Review | Every planned move in a searchable table. Filter by project, page through the list. |
+| Settings | Smart sorting switches, **My name(s)**, **Home country**, duplicate and safety options. Saved automatically. |
+| Activity | The live log. |
+
+The HTML report is one self-contained file (no internet, no external scripts). It holds the same charts plus a
+searchable table of up to 20,000 files; the CSV always has all of them. Set **My name(s)** so your own name never
+becomes a project folder, and **Home country** so photos from home are events, not trips.
 
 ## What it does
 
@@ -101,13 +115,19 @@ hand; flattened into one folder, 21 of 25 were grouped and the 4 unreadable scan
 
 ## Smart photo folders
 
-For camera photos (`.jpg .jpeg .tif .tiff .heic`) that have a capture date, the folder is chosen in this order:
+For camera photos (`.jpg .jpeg .tif .tiff .heic` and RAW such as `.dng .cr2 .nef .arw`) that have a capture date, the folder is chosen in this order:
 
 1. **GPS found, taken abroad, 3+ photos in that country** -> `Photos\Travel\Germany 2025`.
    Two separate trips to one country in a year get the month: `Germany 2025-03`, `Germany 2025-10`.
 2. **Photo sits in a meaningfully named folder** (for example `Birthday Party`) -> `Photos\Events\Birthday Party 2024`.
    Generic names such as `DCIM`, `100APPLE`, `Camera`, `New folder (3)`, `Downloads` are ignored.
 3. **Date only** -> `Photos\2025\2025-07`. A date in the file name (`IMG-20250714-WA0003.jpg`) counts too.
+
+Videos (`.mp4 .mov` and similar) and RAW files without EXIF are dated from the file name (`DJI_20260927...`) or the
+file's modified time. A RAW file or sidecar (`.srt .xmp .lrf`) borrows the date and GPS of the JPEG with the same name
+in the same folder. Inside a trip or event, RAW files go to a `RAW` subfolder and videos to a `Videos` subfolder.
+Photos or videos in a folder that carries a project's name (for example `Orchidia Drone 27.09.2026`) join that project
+instead: `Projects\Orchidia\Drone 27.09.2026\`. Media with no GPS dated within 2 days of a trip join the trip.
 
 Photos with no date and no GPS keep the normal `Graphics-Visuals\JPG` folder, as do PNG, GIF, SVG and PSD files.
 Set **Home country code** (for example `GB`) so photos taken at home are not called trips.

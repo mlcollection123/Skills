@@ -28,12 +28,12 @@ jobs:
       - name: Build app folder (for the installer)
         run: >
           pyinstaller --noconfirm --clean --windowed --name FileOrganizer
-          --collect-data geonamescache --collect-all pillow_heif run_organizer.py
+          --collect-data geonamescache --collect-all customtkinter --collect-all pillow_heif run_organizer.py
       - name: Build portable single-file exe
         run: >
           pyinstaller --noconfirm --clean --windowed --onefile --name FileOrganizer-portable
           --distpath dist-portable --workpath build-portable
-          --collect-data geonamescache --collect-all pillow_heif run_organizer.py
+          --collect-data geonamescache --collect-all customtkinter --collect-all pillow_heif run_organizer.py
       - name: Smoke-test the built exe starts without crashing
         shell: pwsh
         run: |
