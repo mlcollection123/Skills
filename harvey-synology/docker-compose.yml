@@ -1,0 +1,42 @@
+# Harvey on a Synology NAS (Container Manager, DSM 7.2).
+# Put this file in /volume1/docker/harvey/ next to the folders "app" and "claude".
+# Follow README.md in this folder. Do not start it with "up" before the setup steps are done.
+#
+# The whole "app" folder is mounted over /app. That keeps Harvey's database, your mailbox settings (.env)
+# and your trained settings (harvey.local.yaml) on the NAS in one place. Harvey saves settings by renaming
+# a temp file over the old one, which Docker cannot do to a single mounted file, so single-file mounts are avoided.
+
+services:
+  # The agent: reads replies, finds prospects, writes drafts, sends what you approved.
+  harvey:
+    build: ./app
+    container_name: harvey
+    restart: unless-stopped
+    init: true
+    # Host networking puts the container on the NAS's own loopback. Harvey's dashboard only accepts
+    # connections from the same machine, so you reach it from your PC through an SSH tunnel.
+    network_mode: host
+    environment:
+      TZ: UTC            # change to your time zone, for example Europe/Nicosia
+    volumes:
+      - ./app:/app                          # code, data/, .env, harvey.local.yaml
+      - ./claude:/home/harvey/.claude       # your Claude login (writable: it refreshes)
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+
+  # The dashboard you open in your browser (through the SSH tunnel).
+  dashboard:
+    build: ./app
+    container_name: harvey-dashboard
+    command: ["python", "-m", "harvey", "dashboard"]
+    restart: unless-stopped
+    init: true
+    network_mode: host
+    environment:
+      TZ: UTC
+    volumes:
+      - ./app:/app
+      - ./claude:/home/harvey/.claude
