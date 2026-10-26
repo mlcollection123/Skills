@@ -1,0 +1,52 @@
+name: Harvey installer for Windows
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/agent-skills-install-hsopvx]
+    paths:
+      - "harvey-windows/**"
+      - ".github/workflows/harvey-installer.yml"
+
+jobs:
+  test-and-publish:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run the installer end to end (no questions, no Claude login)
+        shell: cmd
+        env:
+          HARVEY_INSTALL_TEST: "1"
+        run: harvey-windows\Install-Harvey.bat < nul
+
+      - name: Check that the installed Harvey works
+        shell: pwsh
+        run: |
+          $h = "$env:LOCALAPPDATA\Harvey\venv\Scripts\harvey.exe"
+          & $h --help | Select-Object -First 3
+          Push-Location "$env:LOCALAPPDATA\Harvey\app"
+          $url = & $h dashboard --url
+          if ($url -notmatch '^http://127\.0\.0\.1:\d+/#token=') { throw "Unexpected dashboard link: $url" }
+          Pop-Location
+          if (-not (Test-Path "$env:LOCALAPPDATA\Harvey\Start Harvey.bat")) { throw 'Start Harvey.bat missing' }
+          Get-Content "$env:LOCALAPPDATA\Harvey\Start Harvey.bat"
+
+      - name: Run it a second time (must keep data and not fail)
+        shell: cmd
+        env:
+          HARVEY_INSTALL_TEST: "1"
+        run: harvey-windows\Install-Harvey.bat < nul
+
+      - name: Publish the installer as a Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "harvey-installer-${{ github.run_number }}"
+          gh release create $tag harvey-windows\Install-Harvey.bat `
+            --title "Harvey installer $tag" `
+            --notes "One-click Windows installer for Harvey (ethanplusai/harvey, pinned version). Download Install-Harvey.bat and double-click it. Windows may show a SmartScreen warning because the file is not code-signed: click More info, then Run anyway. See harvey-windows/README.md for what it does." `
+            --target ${{ github.sha }}
