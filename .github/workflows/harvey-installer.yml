@@ -17,10 +17,14 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Run the installer end to end (no questions, no Claude login)
-        shell: cmd
+        shell: pwsh
         env:
           HARVEY_INSTALL_TEST: "1"
-        run: harvey-windows\Install-Harvey.bat < nul
+        run: |
+          $out = cmd /c "harvey-windows\Install-Harvey.bat < nul 2>&1"
+          $out | Write-Host
+          if ($out -match 'is not recognized|Exception|CommandNotFound|ObjectNotFound|Cannot ') { throw 'Installer printed errors' }
+          if (-not ($out -match 'Harvey is installed')) { throw 'Installer did not finish' }
 
       - name: Check that the installed Harvey works
         shell: pwsh
@@ -35,10 +39,15 @@ jobs:
           Get-Content "$env:LOCALAPPDATA\Harvey\Start Harvey.bat"
 
       - name: Run it a second time (must keep data and not fail)
-        shell: cmd
+        shell: pwsh
         env:
           HARVEY_INSTALL_TEST: "1"
-        run: harvey-windows\Install-Harvey.bat < nul
+        run: |
+          Set-Content "$env:LOCALAPPDATA\Harvey\app\.env" "KEEP_ME=1"
+          $out = cmd /c "harvey-windows\Install-Harvey.bat < nul 2>&1"
+          $out | Write-Host
+          if ($out -match 'is not recognized|Exception|CommandNotFound|ObjectNotFound|Cannot ') { throw 'Installer printed errors' }
+          if ((Get-Content "$env:LOCALAPPDATA\Harvey\app\.env") -ne 'KEEP_ME=1') { throw 'Reinstall overwrote the user settings file' }
 
       - name: Publish the installer as a Release
         shell: pwsh

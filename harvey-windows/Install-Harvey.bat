@@ -1,6 +1,6 @@
 @echo off
 title Install Harvey
-powershell -NoProfile -ExecutionPolicy Bypass -Command "$s=[IO.File]::ReadAllText('%~f0'); $i=$s.IndexOf('#PSBEGIN'); Invoke-Expression $s.Substring($i)"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$s=[IO.File]::ReadAllText('%~f0'); $i=$s.IndexOf('#PS'+'BEGIN'); Invoke-Expression $s.Substring($i)"
 echo.
 pause
 exit /b
