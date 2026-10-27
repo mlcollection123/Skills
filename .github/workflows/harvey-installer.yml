@@ -35,6 +35,9 @@ jobs:
           $url = & $h dashboard --url
           if ($url -notmatch '^http://127\.0\.0\.1:\d+/#token=') { throw "Unexpected dashboard link: $url" }
           Pop-Location
+          Push-Location "$env:LOCALAPPDATA\Harvey\app"
+          foreach ($i in 1..2) { $o = (& $h status 2>&1 | Out-String); if ($o -match 'Error running|duplicate column') { throw "harvey status failed: $o" } }
+          Pop-Location
           if (-not (Test-Path "$env:LOCALAPPDATA\Harvey\Start Harvey.bat")) { throw 'Start Harvey.bat missing' }
           Get-Content "$env:LOCALAPPDATA\Harvey\Start Harvey.bat"
 

@@ -73,6 +73,18 @@ if ($LASTEXITCODE) { throw 'Installing Harvey failed. Check your internet connec
 $harvey = Join-Path $venv 'Scripts\harvey.exe'
 & $harvey --help | Out-Null
 if ($LASTEXITCODE) { throw 'Harvey was installed but does not start.' }
+# Prepare Harvey's database once, in a single process. If the dashboard and another Harvey command
+# create it at the same moment, Harvey can leave it half-upgraded and every start then fails with
+# "duplicate column name". Doing it here, alone, avoids that.
+Say 'Preparing the database'
+Push-Location $app
+$prev = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
+$dbCheck = (& $harvey status 2>&1 | Out-String)
+$ErrorActionPreference = $prev
+Pop-Location
+if ($dbCheck -match 'duplicate column|Error running') {
+    throw "Harvey's database is damaged (a known start-up clash). If you have no data you need yet: close Harvey, delete the folder $app\data, and run this installer again."
+}
 
 Say 'Step 4 of 5: Claude (the AI Harvey uses)'
 $claude = (Get-Command claude -ErrorAction SilentlyContinue).Source
