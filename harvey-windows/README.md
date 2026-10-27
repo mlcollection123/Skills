@@ -16,3 +16,5 @@ The installer is pinned to a checked version of Harvey, so a later upstream chan
 **"Error running 'harvey status': duplicate column name: ..."** Two Harvey processes started at the same moment on a brand-new database and left it half-upgraded (a bug in Harvey's start-up). If you have no data you need yet, close Harvey, delete the folder `%LOCALAPPDATA%\Harvey\app\data`, and start Harvey once. The installer now prepares the database once to avoid this.
 
 **"claude is not recognized".** Claude Code is installed in `%USERPROFILE%\.local\bin`. Close and reopen PowerShell after installing it. The Claude app and claude.ai in a browser are a different thing; Harvey needs Claude Code.
+
+**Using Harvey's built-in Claude Code setup guide.** Open PowerShell, run `cd "$env:LOCALAPPDATA\Harvey\app"`, then `claude`, and say "set up Harvey for me". The installer puts `harvey` on your PATH and links a `.venv` folder so the guide finds the environment. Type passwords and API keys into the dashboard Settings page or the `.env` file, not into the chat.

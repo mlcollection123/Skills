@@ -39,6 +39,8 @@ jobs:
           foreach ($i in 1..2) { $o = (& $h status 2>&1 | Out-String); if ($o -match 'Error running|duplicate column') { throw "harvey status failed: $o" } }
           Pop-Location
           if (-not (Test-Path "$env:LOCALAPPDATA\Harvey\Start Harvey.bat")) { throw 'Start Harvey.bat missing' }
+          if (-not (Test-Path "$env:LOCALAPPDATA\Harvey\app\.venv\Scripts\python.exe")) { throw '.venv link missing' }
+          if ([Environment]::GetEnvironmentVariable('Path','User') -notlike '*Harvey\venv\Scripts*') { throw 'harvey is not on the PATH' }
           Get-Content "$env:LOCALAPPDATA\Harvey\Start Harvey.bat"
 
       - name: Run it a second time (must keep data and not fail)

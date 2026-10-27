@@ -70,6 +70,13 @@ $vpy = Join-Path $venv 'Scripts\python.exe'
 & $vpy -m pip install --quiet --upgrade pip
 & $vpy -m pip install --quiet -e $app
 if ($LASTEXITCODE) { throw 'Installing Harvey failed. Check your internet connection and run this installer again.' }
+# Make "harvey" work in any terminal, and give Harvey's own setup guide (CLAUDE.md) the ".venv" folder it looks for.
+$scripts = Join-Path $venv 'Scripts'
+$userPath = [Environment]::GetEnvironmentVariable('Path', 'User')
+if (-not $userPath) { $userPath = '' }
+if (($userPath -split ';') -notcontains $scripts) { [Environment]::SetEnvironmentVariable('Path', ($userPath.TrimEnd(';') + ';' + $scripts), 'User') }
+$junction = Join-Path $app '.venv'
+if (-not (Test-Path $junction)) { cmd /c mklink /J "$junction" "$venv" | Out-Null }
 $harvey = Join-Path $venv 'Scripts\harvey.exe'
 & $harvey --help | Out-Null
 if ($LASTEXITCODE) { throw 'Harvey was installed but does not start.' }
