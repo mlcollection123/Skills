@@ -925,6 +925,12 @@
       "skillPath": "skills/site-architecture/SKILL.md",
       "computedHash": "20ea864cae2d3261fd233dd5175d8aa0b806857447083c175ed9250066efff90"
     },
+    "skill-inspector": {
+      "source": "NVIDIA/SkillSpector",
+      "sourceType": "github",
+      "skillPath": "skills/skill-inspector/SKILL.md",
+      "computedHash": "7ee4fd8df9f38aa5345b7145e0ac795c28724aab2440c461f35fbc853bbad0dc"
+    },
     "slideshow": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
