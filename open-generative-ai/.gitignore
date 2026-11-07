@@ -1,6 +1,0 @@
-node_modules/
-.next/
-packages/Open-AI-Design-Agent/
-packages/Open-Poe-AI/
-packages/Vibe-Workflow/
-.env*
