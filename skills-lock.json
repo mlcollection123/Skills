@@ -1,1109 +1,1175 @@
 {
-  "version": 1,
+  "version": 2,
   "skills": {
     "60fps-animation": {
       "source": "iart-ai/web-animation-skills",
       "sourceType": "github",
       "skillPath": "skills/60fps-animation/SKILL.md",
-      "computedHash": "d832ea4a0dc07c18483d4fd39352c65e4daa2f298998290730cf159df30f400e"
+      "computedHash": "3783bf5371256b4a496fb3a3ee3e345a66887dc9141091b49984e47bad822811"
     },
     "ab-testing": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/ab-testing/SKILL.md",
-      "computedHash": "1b2e30a097502bddbfac91d6b97d37a286c0c1eeef197e3fd00fedf10a60e883"
+      "computedHash": "182b178db34503d295c2700deea37900491d4d4d69a0b55622e395530abdf396"
     },
     "accessible-animation": {
       "source": "iart-ai/web-animation-skills",
       "sourceType": "github",
       "skillPath": "skills/accessible-animation/SKILL.md",
-      "computedHash": "46695e422851b64f2b680924584ba9f7690309c109b6d98925ef3021b139167c"
+      "computedHash": "396a43fbb461daa4cb93a2795910459ae96c82937f965906b2b84f2703aef76c"
     },
     "ad-creative": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/ad-creative/SKILL.md",
-      "computedHash": "d698c20395e0ae36b35c03a8a6f9619af34814b487dacdc96272e5424e63531d"
+      "computedHash": "cf5c5f0c8315f6183fc5cb4626b48bd7ea4ba2d23223c0846c711e5518350229"
     },
     "ad-creative-video": {
       "source": "iart-ai/ad-video-skills",
       "sourceType": "github",
       "skillPath": "skills/ad-creative-video/SKILL.md",
-      "computedHash": "94c33e3435abd802773c4b7e6058f3d47456bc56354d87b1e6fc2b689757735d"
+      "computedHash": "8c7089ab4336e3f7498f81b31c29527aa249092fc06153227578a14b10a66f2b"
     },
     "ads": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/ads/SKILL.md",
-      "computedHash": "80674b9a5ff65f547e0556d906601d8e7d826100065ca4bd8e42e54add2ca371"
+      "computedHash": "c1636c868d6f7c6fbfdf3cecb96ac6d4b2e2e4e690e8d22d405cbf8ca644b69f"
     },
     "after-effects": {
       "source": "iart-ai/motion-design-skills",
       "sourceType": "github",
       "skillPath": "skills/after-effects/SKILL.md",
-      "computedHash": "9db077d9664f5c45157c53b754d3c72bb346999a260c63d3d4892745a3eefd02"
+      "computedHash": "994d99fd920c23262285dfbb41e9c51b95c85451e8e71dec7257ad699d00e3b7"
     },
     "ai-seo": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/ai-seo/SKILL.md",
-      "computedHash": "d257f571718cf2c27aa3e49128a3ec7523a90345ebbc33080f33a26771930ee8"
+      "computedHash": "5e4ec11ad6b2f0bc64610dee4d98bcfbd4e05929630e7b2419b6e6d818f948fa"
     },
     "analytics": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/analytics/SKILL.md",
-      "computedHash": "0a586afc77c6d9a0d623e445ad78dd987f5da5a2d77ff7fc2aa587c008c251e7"
+      "computedHash": "56febd9368692ffb01df1d46b47d6b71d31718b7cdc9b7a3be26c1a655f48be1"
     },
     "animated-infographic": {
       "source": "iart-ai/data-animation-skills",
       "sourceType": "github",
       "skillPath": "skills/animated-infographic/SKILL.md",
-      "computedHash": "4f9770d38b1f9b2a62fb424971e85c7bf1e94153ed18ffcc283b4ed05c104b68"
+      "computedHash": "8581dfd7d12292d16baab6194b70dedab98099222f24e679ce63590de2a7ba75"
     },
     "animation-principles": {
       "source": "iart-ai/motion-design-skills",
       "sourceType": "github",
       "skillPath": "skills/animation-principles/SKILL.md",
-      "computedHash": "140b00a44e08aa7649fb1cce1c48670ff2e76f3889fbac0b5311cc5bb818d7b7"
+      "computedHash": "429233e8c4a429b072130b231afb072eace2f5f5e9d6d7c7566ed8c2bd4aec83"
     },
     "api-and-interface-design": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/api-and-interface-design/SKILL.md",
-      "computedHash": "8bdbf1fca81bef9258d7e0d9726f933f25677ec8537792e084a3fb7c54acf2ba"
+      "computedHash": "e0b01afd4e2e445ec31d1b083bd0b81a9d1665d5a7f961a1bf57e521625fef27"
     },
     "ascii-animation": {
       "source": "iart-ai/web-animation-skills",
       "sourceType": "github",
       "skillPath": "skills/ascii-animation/SKILL.md",
-      "computedHash": "cc219b1851f713f76934a2738ccdcec37d4a266f1d20ecc346487290cc40d2fb"
+      "computedHash": "b8b5f56046c43c82c3300d46c4295014c590bc340cb9351cfbe89f41f0a8f2b7"
     },
     "aso": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/aso/SKILL.md",
-      "computedHash": "12f6cf8fc8309846f2f5628b5f4d06616d000732c668fc19d7d900ca8da57bc3"
+      "computedHash": "5c5341202e8b5725b15392691616696eff16fee8956295a09ef22bbdea0d4cf1"
     },
     "attribution": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/attribution/SKILL.md",
-      "computedHash": "a98abe1cd89ef10eef6acb30f0d4db9158cb449dde59bf0b82e715b3f27038d4"
+      "computedHash": "7d485ac6432839a1894e7e7d440fcefd7d2b985306032f15c8829350f0f6548b"
     },
     "audiogram": {
       "source": "iart-ai/youtube-video-skills",
       "sourceType": "github",
       "skillPath": "skills/audiogram/SKILL.md",
-      "computedHash": "fc86a13a622c0177a364de1ced4161c894ab5a141ec859ce0e6f436baeeb57ec"
+      "computedHash": "eaffc934304b10d0eb08c59ac0217845f19e00ea0683f668d486e3fc91abad2f"
     },
     "backend-patterns": {
       "source": "WorldFlowAI/everything-claude-code",
       "sourceType": "github",
       "skillPath": "skills/backend-patterns/SKILL.md",
-      "computedHash": "1080fcdc65786651e1d2bad3fb7f3d2d1c28ebcc2f0daebde0d6aa7da5240f60"
+      "computedHash": "65ae417a68271f15c134250443ccaf63a7c71318cdebaf9b3b891e88e5c98aad"
     },
     "beat-sync-editing": {
       "source": "iart-ai/motion-design-skills",
       "sourceType": "github",
       "skillPath": "skills/beat-sync-editing/SKILL.md",
-      "computedHash": "4089a0b65782c529ebd4fe9a576588fb51cf716573b4d683b0494e6554e61e03"
+      "computedHash": "0d5cbde0dd3707e9fd688fdaf407648dbbb5792da3513d5abc6f5dc0a108640b"
     },
     "brainstorming": {
       "source": "obra/superpowers",
       "sourceType": "github",
       "skillPath": "skills/brainstorming/SKILL.md",
-      "computedHash": "fc6339f0e5b48c63279bd4f6c6340db55301b69ccc37a13e1e52bd5b3062746c"
+      "computedHash": "7d948b659fa494b6121055f66d6b94133381110a9f2304b8c0187a8e1581cdb0"
     },
     "brand-motion-guidelines": {
       "source": "iart-ai/freelance-motion-skills",
       "sourceType": "github",
       "skillPath": "skills/brand-motion-guidelines/SKILL.md",
-      "computedHash": "50b10b1630764e7aa44eb1b6754711f3be4743d6cc6adf5c41872455d9f9c3b9"
+      "computedHash": "bfbc7adf7580dc72844c7bda5f8d5cb2912a6110e2109e89bc48dd3e350bab41"
     },
     "browser-testing-with-devtools": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/browser-testing-with-devtools/SKILL.md",
-      "computedHash": "639950ea71851d9c4919608cba8b6276cd1ba30cd82acdc4949c701537eed661"
+      "computedHash": "faada493db081854d597976b3b11421f1176d81caadadf53e8312745d29eb20a"
     },
     "caption-animation": {
       "source": "iart-ai/tiktok-video-skills",
       "sourceType": "github",
       "skillPath": "skills/caption-animation/SKILL.md",
-      "computedHash": "e42c4828d3c6115dfb4d8fd3c3fd485b8e6a89c35a8835eee6dae39fb83210a4"
+      "computedHash": "85e2df35826e3dda204d0dd9f1238d649eebcc1037dd8c6ee924304c19eed6e8"
     },
     "chart-animation": {
       "source": "iart-ai/data-animation-skills",
       "sourceType": "github",
       "skillPath": "skills/chart-animation/SKILL.md",
-      "computedHash": "51b5bd9e8f6a9f4bd6e14044634f10450f2f4cf8e5aca44dd246ae710d2135bc"
+      "computedHash": "32b27babec7201892b2c4dfb620c98c707db5f1a47fdcb0426088b53c5da2a70"
     },
     "churn-prevention": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/churn-prevention/SKILL.md",
-      "computedHash": "65285ecf0cb501577f13ba4e1fcc66e71d9a52c6746f08fc2e9e0502cede2e64"
+      "computedHash": "f39a5962068571bd9f0a84453119c6eeb1a313bc44f533ac67c21bc0ce82249e"
     },
     "ci-cd-and-automation": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/ci-cd-and-automation/SKILL.md",
-      "computedHash": "578b098a7d2352ccdac8b8abdc40eb6803538e81cf8382f138da6188a655087c"
+      "computedHash": "80b7002a828a0ab619364172eb9cbcd7ff08ec39dc5a2fc2794fb3acc6c02cf3"
     },
     "clickhouse-io": {
       "source": "WorldFlowAI/everything-claude-code",
       "sourceType": "github",
       "skillPath": "skills/clickhouse-io/SKILL.md",
-      "computedHash": "dc01575a26008304b60e71c06dceafcc7eefd6e9cb74033bfff2fcbd1c245815"
+      "computedHash": "abf3e7c2c61f47ed2660a3c0684d7e910ec76de395e4b4c5fb5a56ca430badd3"
     },
     "client-revisions": {
       "source": "iart-ai/freelance-motion-skills",
       "sourceType": "github",
       "skillPath": "skills/client-revisions/SKILL.md",
-      "computedHash": "96ec764dde40a372743e06662e49a41c575240613f8e5b4b4ed596513fb91bd7"
+      "computedHash": "09ffd9cd3508ad859fa84b1024d381b0c99cb01236010b605b8824db6c181360"
     },
     "co-marketing": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/co-marketing/SKILL.md",
-      "computedHash": "ba18bd98b0442d6931902d3f3629717e6115f733f3c6df7516dc3e4d3ffacb69"
+      "computedHash": "756ac3fd99d2d6e74f838240b1f119c34112307dd7023f8d1105b026b9f718ad"
     },
     "code-review-and-quality": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/code-review-and-quality/SKILL.md",
-      "computedHash": "0667c7af98996c0bec4fb0eb444680bdbf1da1d6a3cfdf5dbe8cbd350d9d2752"
+      "computedHash": "863d871e7b8c00ed4d0f38e36497f5febda0f5b17150dedebf6ebbcf31a35ad6"
     },
     "code-simplification": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/code-simplification/SKILL.md",
-      "computedHash": "7973e746e8e2ea5004d520da970c15a106824b8d6be1bcff48908aec021f3677"
+      "computedHash": "2fcb05c8539171b51d3ac967b3bb8e25a65d765036d8a9f3c295a7d73cf1da90"
     },
     "coding-standards": {
       "source": "WorldFlowAI/everything-claude-code",
       "sourceType": "github",
       "skillPath": "skills/coding-standards/SKILL.md",
-      "computedHash": "cfd3b584567b581684ecfeaf8bfdbe0518f1924a6287a0d2316e8cb21254c878"
+      "computedHash": "3e477dfdc84a1cac70657bc4180e1dc125e71996c947adf948201e9cefab5b2d"
     },
     "cold-email": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/cold-email/SKILL.md",
-      "computedHash": "04df3a3569e02bab321ddbf4723a3a9ce59ebb224500ddd8705e272d3ff16d51"
+      "computedHash": "ad8dd8f17d9bddb3be01e9f16f9595247ea8c2c11723d381c95ace5830034d18"
     },
     "color-motion": {
       "source": "iart-ai/motion-design-skills",
       "sourceType": "github",
       "skillPath": "skills/color-motion/SKILL.md",
-      "computedHash": "7c05f7d35427d5fbe2fd1b5b6c0622252314a049797085fce085085cbf4c3e6e"
+      "computedHash": "9a903f9da53b2c5f7128020a7d5ca8aa05b56fce24e9e2a09c10fd3a7f2e788a"
     },
     "community-marketing": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/community-marketing/SKILL.md",
-      "computedHash": "07ae29742d77a243b988267ae4bfdab90b3ca8219ab15db0feeed94c054ba1c2"
+      "computedHash": "8d688394a863cfabfea3f16ca29c8e2254cfc483ff22a2dd1ce89f55e0289614"
     },
     "competitor-profiling": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/competitor-profiling/SKILL.md",
-      "computedHash": "cfae4d2a5b6a4b08784aa63784147d8baad61eb9696840b96e182ef4893fd736"
+      "computedHash": "06d7edee99cf79d7e6eec103d2a6fb46462ca5ba70899b5708c5d739a2af4fb2"
     },
     "competitors": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/competitors/SKILL.md",
-      "computedHash": "38efdc0ec5c612ca82c392c026038834da6da078a79e92dd89cd8d3d08f0519b"
+      "computedHash": "fe8717ef31f65c8e977fed2210cb4c3e1e8f8c98b909e342ef44735043b5ee66"
     },
     "constraint-driven-development": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/constraint-driven-development/SKILL.md",
-      "computedHash": "7cdf20ff7d27eb3103b206033a1d87af7afe4a648162f09cd382fc8e3cb9a42b"
+      "computedHash": "4ba46d6b7b0fd1a50779e019a13d277bb6062b7fa1c0d940d433b3a7d71489f9"
     },
     "content-strategy": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/content-strategy/SKILL.md",
-      "computedHash": "7677dba18780b18ea2247b44d2cc8be05ec1dbec319da51a21cf297eb3d0fd1b"
+      "computedHash": "e0a3f3fbd1d21a798cbd96876faf65b0aab0a22854a85a04c9e323ec05cdf1af"
     },
     "context-engineering": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/context-engineering/SKILL.md",
-      "computedHash": "807434a4b178635a5539a1da241815ba7228f00b71f8e3ccd529472ce3bcaf80"
+      "computedHash": "2a94634d9b648c733d6c25723a48784d8a5da0e55c3a743398eb3b22ea4dc329"
     },
     "continuous-learning": {
       "source": "WorldFlowAI/everything-claude-code",
       "sourceType": "github",
       "skillPath": "skills/continuous-learning/SKILL.md",
-      "computedHash": "1145edf8a84aa713fa4c404b97bbdb6ac81b87ed7de61f7511daab516a87db95"
+      "computedHash": "e8bd16f152c4f90e92e0a00974b752c461cad042e349eb062f0e7e7455313b1d"
     },
     "copy-editing": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/copy-editing/SKILL.md",
-      "computedHash": "d755d5546c8ccd2b6a77695230a1d54869635cbd52e53545b0ce5bd367850432"
+      "computedHash": "3b57cc771fb60bdf85c66dc54fea9600d8639e49d941f2d4fd699911e2529b81"
     },
     "copywriting": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/copywriting/SKILL.md",
-      "computedHash": "6341d240554cb1bcdcce414e9024af9a45f2606bd15493fb6c9a170945a0a0e9"
+      "computedHash": "8c4131a2d6d1330d771452e0889134679f17833031affcc6f61fe695093b9023"
     },
     "countdown-video": {
       "source": "iart-ai/tiktok-video-skills",
       "sourceType": "github",
       "skillPath": "skills/countdown-video/SKILL.md",
-      "computedHash": "dafb9127ededa76d0df08be73adc46e18d6ec3955153f6ecfd0f928984ce95b2"
+      "computedHash": "0880e2c2c689a9b19d72946e75d04b1e3e780aa8877cae43ec11738bb9a367b1"
     },
     "creative-brief": {
       "source": "iart-ai/freelance-motion-skills",
       "sourceType": "github",
       "skillPath": "skills/creative-brief/SKILL.md",
-      "computedHash": "7baf3d7784420dd4fe049c69bf1517d9c6f312cfa80fa88dabd0760512361230"
+      "computedHash": "3b92f77d0062a352b1b2756c1303c263c2ac7b5df1e9104a892f8efcc805f809"
     },
     "cro": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/cro/SKILL.md",
-      "computedHash": "f1974581536c4c860a0f7da4b663e2520dfc79a065327b576b12013dd62ad45e"
+      "computedHash": "f1ff2b3545fe4bfe42272633b9732e612e88bd8e434a93bc1432f65cb2848924"
     },
     "customer-research": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/customer-research/SKILL.md",
-      "computedHash": "1ffc6f8bf17af451e3f6b65fc18ff0162afaf0c6eab176e0afda17582d87f221"
+      "computedHash": "be22363421939988cfdde4e96d00fbdce32dbe5814d5e3bef0a0edaceb0961d5"
     },
     "debugging-and-error-recovery": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/debugging-and-error-recovery/SKILL.md",
-      "computedHash": "6f437bc609eb8d0dc7f4768c17c9aeb85c9c7632bc36703af9f1367ffb47237a"
+      "computedHash": "493f4a0759a468ad963a7cd45713d28b23f4f9893ec7765f91f7c612ef5265b5"
     },
     "deprecation-and-migration": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/deprecation-and-migration/SKILL.md",
-      "computedHash": "0d7b2002e250c02a260f6bc502d7a798ab8e8ca0c020c54d7b0f16053935c72c"
+      "computedHash": "749bcd3b8a31fbe2f59d1dd27ab36909b3f9d3bc5a4e7057fc7fecad14f32e87"
     },
     "diagnosing-superpowers": {
       "source": "obra/superpowers",
       "sourceType": "github",
       "skillPath": "skills/diagnosing-superpowers/SKILL.md",
-      "computedHash": "0f33f20feb5340f7be932581880325725b0d2894e15193bffeab53ad474c3267"
+      "computedHash": "dfe7cdf5d0f9410eb71febb08253d6b66508befab513616ae25e7e5094a6b645"
     },
     "diagram-animation": {
       "source": "iart-ai/explainer-video-skills",
       "sourceType": "github",
       "skillPath": "skills/diagram-animation/SKILL.md",
-      "computedHash": "875808a72e79967c35c1743af1f98d9904d83b5f278e13f248b65d63b7baff2a"
+      "computedHash": "66ff5001feaeabfe500f66e52c5547f0ef09fd1475a6242cacd7a829c2b41e2a"
     },
     "directory-submissions": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/directory-submissions/SKILL.md",
-      "computedHash": "417cac1c79ede4aa1abcacb521cf6c6d5bcbf9b1bc1e66266d8a2e52ea447adb"
+      "computedHash": "cc6a27c35baf1758c87ebd90ce5d89e5103653ebe58f9efce65eb5f468818191"
     },
     "dispatching-parallel-agents": {
       "source": "obra/superpowers",
       "sourceType": "github",
       "skillPath": "skills/dispatching-parallel-agents/SKILL.md",
-      "computedHash": "b011107f17188e0b2898bb1856b5bac8b49537cc86e737c82126558a235bd62a"
+      "computedHash": "d799e464fdfb0edc80b3b7ad7cce03e64ee07fc5db231c988688a81438503659"
     },
     "documentation-and-adrs": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/documentation-and-adrs/SKILL.md",
-      "computedHash": "f1bd038e74194364c1dcdb3dd0a72194ffd3ca9d3a103c125ca1a62e801a0cc4"
+      "computedHash": "9d35bb8278cda29d0f2e02f425390596486f834d85a48b674ef09f0bcc25fcd2"
     },
     "doubt-driven-development": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/doubt-driven-development/SKILL.md",
-      "computedHash": "b13f18a68abf2a1fd0c30adeac9bec0ee551adec9f2a1dc2700f1a6e3eb48092"
+      "computedHash": "66d08630b4bcda3ddc1e26b8cc32d8056291b7f8ac102f93533eb346d8dd853b"
     },
     "emails": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/emails/SKILL.md",
-      "computedHash": "68b5286faa8cf8ef87feeaa51e1a7db54ae124f5365769d7fc9976d40ed23c4a"
+      "computedHash": "05158d0876b36442efa940acf49e46006b0797df5bf4e249a4a1f345eb0dd99b"
     },
     "embedded-captions": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
       "skillPath": "skills/embedded-captions/SKILL.md",
-      "computedHash": "002ecd86409f69934acd6c624b3242480d472ea5b54b2988ee74f75799fb99c4"
+      "computedHash": "2894c22c95f7f67faa64417725fe4bd333512c403d768a637664799f03c408b8"
     },
     "events": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/events/SKILL.md",
-      "computedHash": "f92f21a38255f8e472ef10286036543b53f08501750f01b66236c31a6a357c70"
+      "computedHash": "85cc089e88907c9786ff476288074b81116d59ad676ea5345062a9fb67344397"
     },
     "executing-plans": {
       "source": "obra/superpowers",
       "sourceType": "github",
       "skillPath": "skills/executing-plans/SKILL.md",
-      "computedHash": "ebf526e8565d02852f57f473bfb97c1baf142d4afe97dc6d169e966514382963"
+      "computedHash": "92e6b0abb694c473684a4922ea09a84515f3ff9f755f17c783689015c85f5f6e"
     },
     "explainer-video": {
       "source": "iart-ai/explainer-video-skills",
       "sourceType": "github",
       "skillPath": "skills/explainer-video/SKILL.md",
-      "computedHash": "ab433063cdff431ee5d10d6ce8b4d2e1cb4b608fa6637c7d05d08580d1b1b08a"
+      "computedHash": "87ccb2ee8ed2aff4f69afb42bcae9c882a09425c53a1e1bb5efa1cb0d9f2c29c"
     },
     "faceless-explainer": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
       "skillPath": "skills/faceless-explainer/SKILL.md",
-      "computedHash": "495d25c528aae0107dcadbca8336e007f6db9e6fc85873b715eb5aa506ad4165"
+      "computedHash": "25a2b11b8866c0772a2d86093caa4951f629d22f40f0ad8c38d226d56de0579b"
     },
     "figma": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
       "skillPath": "skills/figma/SKILL.md",
-      "computedHash": "0aed427d5eaac09e92181b85a7ccc9bbdeab138a01272a02c13349546c10bbc8"
+      "computedHash": "5a91e9ed457ee638afbbff705a1f243132b927fc5fca3d6f5e37bda0fd49d69e"
     },
     "finishing-a-development-branch": {
       "source": "obra/superpowers",
       "sourceType": "github",
       "skillPath": "skills/finishing-a-development-branch/SKILL.md",
-      "computedHash": "4f571e7befb8b0946d9d7770232c818812412e9ab1dfb811f847edfba1fc6275"
+      "computedHash": "7e24d821d45b8f10773edd9f1a4be2fac90eedae4f8fc8e70e34e27e44d3f3c0"
     },
     "free-tools": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/free-tools/SKILL.md",
-      "computedHash": "ab40a39f8b10a0ee423f47005a49defcae4e9b82b4c6e5be1d6c67d7f963973e"
+      "computedHash": "19dd75557e1b00827430315d2d77701ce325f00aa0dfbd009c9e534c3dcd43da"
     },
     "frontend-patterns": {
       "source": "WorldFlowAI/everything-claude-code",
       "sourceType": "github",
       "skillPath": "skills/frontend-patterns/SKILL.md",
-      "computedHash": "d09902e6be25b21c02a9fe04d43cdd399d22033285d983ea5e4a16296b226a27"
+      "computedHash": "df060449d0a7e3d217dcfa9b09eccf56d2f20fd8170a2c9909107cde53a8d2d0"
     },
     "frontend-ui-engineering": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/frontend-ui-engineering/SKILL.md",
-      "computedHash": "49bb6ccfc41753bdd679f368ce75629ae9d424c5b8abc33faf949a4a55f919a1"
+      "computedHash": "7cc65d7bd0a87fcc2dc8940067754872d14eb748882d3b745a877481510827a5"
     },
     "general-video": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
       "skillPath": "skills/general-video/SKILL.md",
-      "computedHash": "2ab2f937386bbe6c54f795460737ea768a90406b965e5c32ae0fa8ab9d486707"
+      "computedHash": "d6676913619d5d3b143866e1ec4137a6fc742b54797cac2bb253eec276177e0e"
     },
     "generative-illustration": {
       "source": "iart-ai/generative-illustration-skills",
       "sourceType": "github",
       "skillPath": "skills/generative-illustration/SKILL.md",
-      "computedHash": "44b938cb23d71354896a7e5501b6c74aec80bb0add0413a3453c2b619f267c8d"
+      "computedHash": "f2aaee7010b284579ea3f2eb9d4e59108da158d873bd0d8d99bb28c09c3e3f0a"
     },
     "git-workflow-and-versioning": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/git-workflow-and-versioning/SKILL.md",
-      "computedHash": "e8e0d1cc98c0a6b81d2979442ae92addae32cd5194fb5c4eac4ac5228b408770"
+      "computedHash": "3463db975b3bba5e7f9d117abfba3126b694085bdac50683072ee971fe56ae21"
     },
     "glassmorphism": {
       "source": "iart-ai/web-animation-skills",
       "sourceType": "github",
       "skillPath": "skills/glassmorphism/SKILL.md",
-      "computedHash": "c98e77044561fea5e51116156d0ba600a56f9961ed18b498d72504d49aff7882"
+      "computedHash": "52c31c76c1ce3c52485ed43c3dc36796c833972a0f916215392c2b611209a2dc"
     },
     "gsap-core": {
       "source": "greensock/gsap-skills",
       "sourceType": "github",
       "skillPath": "skills/gsap-core/SKILL.md",
-      "computedHash": "c4a01101d9e1aafbf4b49f75d74f9349790d8741981ba0237c990093863035a6"
+      "computedHash": "dfc8ba849fa8b81c8cc60964ee2a5fa8db4b2a2611801cf549a5b267b8284fa5"
     },
     "gsap-frameworks": {
       "source": "greensock/gsap-skills",
       "sourceType": "github",
       "skillPath": "skills/gsap-frameworks/SKILL.md",
-      "computedHash": "4852e85a48088d9044b08ebd1db607915b628c0c3ec7e04300713f546728fbdf"
+      "computedHash": "25f2f1f85c3d7a6431623c50e894af58213cc96d4e6660564be80ca011b883f6"
     },
     "gsap-performance": {
       "source": "greensock/gsap-skills",
       "sourceType": "github",
       "skillPath": "skills/gsap-performance/SKILL.md",
-      "computedHash": "863842ac2d7aee53fd4f0025c960173d7ad3e658a5715b89b2211fa280213c1f"
+      "computedHash": "4dd4382cad329927a248fbe55c426901f2bf4f5c598db6ef5ec38c19861b829f"
     },
     "gsap-plugins": {
       "source": "greensock/gsap-skills",
       "sourceType": "github",
       "skillPath": "skills/gsap-plugins/SKILL.md",
-      "computedHash": "791bda0e6e460511fe82a78e745db519b88ffaeeab4d04a74879a03ca4f41740"
+      "computedHash": "328b52a98e9704c0349ba2cee23a6a92376c06b6b1fd3e60e5c20395b55e25e8"
     },
     "gsap-react": {
       "source": "greensock/gsap-skills",
       "sourceType": "github",
       "skillPath": "skills/gsap-react/SKILL.md",
-      "computedHash": "7d3b52822681a4158e371f895c58fb7030ecaf33f585a534b7162f9e92c5d893"
+      "computedHash": "35fd08f2cbfc945f1a8cdd39e232882a19e27781a4043ee1bc71f65432f03389"
     },
     "gsap-scrolltrigger": {
       "source": "greensock/gsap-skills",
       "sourceType": "github",
       "skillPath": "skills/gsap-scrolltrigger/SKILL.md",
-      "computedHash": "1cdc5647693783cb7a662d84a5de434c88a051ed56b4d33597c9b5782b5973e6"
+      "computedHash": "c29c5a0fb1506a7f577fe68282eafc6df14b8d2b8ecd24f1f05836f5a0957b67"
     },
     "gsap-timeline": {
       "source": "greensock/gsap-skills",
       "sourceType": "github",
       "skillPath": "skills/gsap-timeline/SKILL.md",
-      "computedHash": "54981c2feec5a9c0d57988aeb32315af32bdeadd261550d5e9db7a7b1f08b487"
+      "computedHash": "622140f48b7aa6bcf2f4d4c050b8fa20effa533688a1650854f5ffc1be169a0b"
     },
     "gsap-utils": {
       "source": "greensock/gsap-skills",
       "sourceType": "github",
       "skillPath": "skills/gsap-utils/SKILL.md",
-      "computedHash": "1ab2387f6e694718a4f1b5acf2a4ab16e1b884c3428adf5f6b26d830f00826cf"
+      "computedHash": "d05b56284eea0118d481b8c673aff27cae66199282995bfe78315785f561002d"
     },
     "hairline-adopt": {
       "source": "lucasmarkes/hairline",
       "sourceType": "github",
       "skillPath": "skills/hairline-adopt/SKILL.md",
-      "computedHash": "b637cec02d6073b9b19cfcb2a45e0b9ec0ab074646314e5880b001de2cb56d9d"
+      "computedHash": "d4edc63a5894714202043b8b591ad6ef568b1f9ec4f3e8ef003d0765cf55914f"
     },
     "hairline-create": {
       "source": "lucasmarkes/hairline",
       "sourceType": "github",
       "skillPath": "skills/hairline-create/SKILL.md",
-      "computedHash": "97dc77430c05a87e0e1e985f7952938b02147040742ec88095ccfe6f1abe11b5"
+      "computedHash": "e594dafa7ac7f2c02939ba7863b46ee4789375931bc53267dec8b2b029cea3a4"
     },
     "hyperframes": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
       "skillPath": "skills/hyperframes/SKILL.md",
-      "computedHash": "042dea7aa09ed22ac8b73088ca126614421426b395259826f27af1538cc9f89f"
+      "computedHash": "5a8a484a89eef42b1f557b93a2a87cb22e602db5ca1659ecbf9d297d28db1f08"
     },
     "hyperframes-animation": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
       "skillPath": "skills/hyperframes-animation/SKILL.md",
-      "computedHash": "3d6678f0e325d69026678982b8616e181f8e92a4e7075f1f51a9b9696a265aba"
+      "computedHash": "4bb82f6fb626400afde24a12e6136fb33bbf9688228447b4e322146eefd5b727"
     },
     "hyperframes-audio": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
       "skillPath": "skills/hyperframes-audio/SKILL.md",
-      "computedHash": "fed70bda20b7480227413f6876682d8ba4935aa069b5491642d55141d9508b24"
+      "computedHash": "9b4c8866c31c42dcf13a5af61ef115b47f1a298e84821cde43967cc7a62bcea5"
     },
     "hyperframes-cli": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
       "skillPath": "skills/hyperframes-cli/SKILL.md",
-      "computedHash": "cfb959b1a3957339c0389a540fb1b28dacb6beaa8ad84e7c494a9fa3a7093245"
+      "computedHash": "21d3c1abefe6c345092752057a3e53dd94e81f7515111c64d1e0de56ad6946c7"
     },
     "hyperframes-core": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
       "skillPath": "skills/hyperframes-core/SKILL.md",
-      "computedHash": "c9c7e45910fc11189097e23d804adee814e2647b1c486d959fd1acb54a3fbf04"
+      "computedHash": "1f5f7b5ace4af8a7624bbfe3d0b6661e8a95ace426952a6d6290087ce7f4c15f"
     },
     "hyperframes-creative": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
       "skillPath": "skills/hyperframes-creative/SKILL.md",
-      "computedHash": "09964279b80ce3a74e1cec848c795734385ba57567c9b967c8dac4e3c94e9afa"
+      "computedHash": "0210554abfd74047a381de628a069df5741b0c4de4e4b3d653516c5bb9c58282"
     },
     "hyperframes-keyframes": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
       "skillPath": "skills/hyperframes-keyframes/SKILL.md",
-      "computedHash": "99f3b420941f6f91d49c36865fb21e46a562cd43a3b88a1f2297f79d55542c35"
+      "computedHash": "7384f751d03e1efc25561f5930cd7f43937730365135a9e9378088470b267db5"
     },
     "hyperframes-registry": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
       "skillPath": "skills/hyperframes-registry/SKILL.md",
-      "computedHash": "54b17fdebee3ac56d279f0e2c1cfdab78839c05344bb4c0874c6f3941621e2ff"
+      "computedHash": "52ce24b725714506f8bd7ea5c46ac9b6d3f92bded9747fdc8b18629305d34215"
     },
     "hyperframes-studio": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
       "skillPath": "skills/hyperframes-studio/SKILL.md",
-      "computedHash": "073b806d264702d330426248608b7d70efb50050b8c61800f74dd6d77a317559"
+      "computedHash": "fa36b9e5353902ba68dd4f24c31e3f5c29fb580272f6addfa27e63ee392a31cc"
     },
     "idea-refine": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/idea-refine/SKILL.md",
-      "computedHash": "9fc0ae5d8a074872a636d22f9c6fe71e041b86cddc9fe5af90ef654f5032ec5d"
+      "computedHash": "d99d88702012055f82b3d3a2174ea467dfb51a9abd7c583020f91a2b7333836b"
     },
     "image": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/image/SKILL.md",
-      "computedHash": "c0f8c9af68113a4ae53a0e816d6f4573a3bb9f3d26e7400ff5fb3c9348d2e510"
+      "computedHash": "61d01680b198592b125f95d0e3a0f6c7858930b16f7b12614358c2ca0b7547df"
     },
     "incremental-implementation": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/incremental-implementation/SKILL.md",
-      "computedHash": "bb1198705f46dc9ff75fb5685a7a872de5924d743b44eb202135f5046750ab7e"
+      "computedHash": "62ef93c6389f110af49ed4fad1fe2c27d3d9dd2d8fe0d0f6db089489c3d4aac3"
     },
     "influencer-marketing": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/influencer-marketing/SKILL.md",
-      "computedHash": "693bbbd1df35a3fcb87a20a9d03ed9b4eefb3e4f624ebe3cbb5942686c559f98"
+      "computedHash": "6ee9771d424ceda23d1370dbcf5cb54b7a867464247f961cefac10ac77cc5d92"
     },
     "interview-me": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/interview-me/SKILL.md",
-      "computedHash": "4229002dd862e6e037c8a01c3e31d9af097465c58b2c3611912edb2af005f303"
+      "computedHash": "68615337944c1d56cd9db6b934e247ff1d67600dd9db3d41cc9bf7236b9d986c"
     },
     "isometric-animation": {
       "source": "iart-ai/explainer-video-skills",
       "sourceType": "github",
       "skillPath": "skills/isometric-animation/SKILL.md",
-      "computedHash": "3b7b114f3292526edb8f3da0436e2c722715e3cdc421d329c231fc8afe6f4dc5"
+      "computedHash": "4414e29457c5fb508b722520419b31a2beefc476674a97457b4adc4c4d6ab8c7"
     },
     "javascript-animation": {
       "source": "iart-ai/javascript-animation-skills",
       "sourceType": "github",
       "skillPath": "skills/javascript-animation/SKILL.md",
-      "computedHash": "37ca00250a295b54d5bdfcb972dfc697cf5d64e4b217a3a1c59e2c961453b715"
+      "computedHash": "8cf58410b8ebc1434f20b775472f6f785ff24e03153f63ff1d4271005ca8f2ac"
     },
     "kinetic-typography": {
       "source": "iart-ai/kinetic-typography-skills",
       "sourceType": "github",
       "skillPath": "skills/kinetic-typography/SKILL.md",
-      "computedHash": "1a59da2f9bf89dcdd23ac35248f7e40ae1586e670a10408edad8728169dfb415"
+      "computedHash": "7f5a42a68017f67a8dc140ecf676820319cd22b98b909f9e8b615448baf19d8c"
     },
     "launch": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/launch/SKILL.md",
-      "computedHash": "b46c65a3d55e1721a2e65bfe4fc6826ecdc1c6846b62ffee4fead2188f556243"
+      "computedHash": "a54c69eb01b84962ea24a0727a604813b36b2a8cf6a6a468f41d5c38a2c0a6c5"
     },
     "launch-video": {
       "source": "iart-ai/ad-video-skills",
       "sourceType": "github",
       "skillPath": "skills/launch-video/SKILL.md",
-      "computedHash": "a55b82d2ca76de5bb80a1217594b11d1bf1ae4485b487bcad7ab256e2f116790"
+      "computedHash": "6ded8ddfd08de6207fe725dbb99ceba4eac59312521a590c1c7a6626b68a2ebe"
     },
     "lead-magnets": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/lead-magnets/SKILL.md",
-      "computedHash": "1956a2253be6ce5f59361d4af7757eb230d92835bff1dd4f7b19af2a1dac89bd"
+      "computedHash": "7eecb89feaca6156794dd7c0a1254eba3043d225841177a4b068c9a016d10d63"
     },
     "logo-animation": {
       "source": "iart-ai/motion-design-skills",
       "sourceType": "github",
       "skillPath": "skills/logo-animation/SKILL.md",
-      "computedHash": "3bba34771ff84fa7e68dc8026e195aab411a82b01091c9427fc8f3c8e48e7d99"
+      "computedHash": "83fe1e51ea228454bcb6aac125fdf69b191b410f75abff250d848f88a27c3581"
     },
     "logo-design": {
       "source": "kaankiziltug/logo-design-skill",
       "sourceType": "github",
       "skillPath": "skills/logo-design/SKILL.md",
-      "computedHash": "45703b93086ff2accb72fff8d3d9e184041bc7bd9f0d0d747f49b606d03af28e"
+      "computedHash": "abf1c1ff0da6d07324d614aea239ee10637d874ba67ec57527da86d3c7f5fa61"
     },
     "lottie-animation": {
       "source": "iart-ai/web-animation-skills",
       "sourceType": "github",
       "skillPath": "skills/lottie-animation/SKILL.md",
-      "computedHash": "3b9838145f5af19d03014a5eca9041ae0ba267b77e312332a129f3fe40078f68"
+      "computedHash": "1d3c9dac2ff3e7e54f1fb5a622ed5667992efab37966256a1906276d86b254b9"
     },
     "lower-thirds": {
       "source": "iart-ai/lower-thirds-skills",
       "sourceType": "github",
       "skillPath": "skills/lower-thirds/SKILL.md",
-      "computedHash": "e72c9b665932bb33b891bdb853685bf7dd23e4b4237c12d5a34f62cfab8d74f6"
+      "computedHash": "263be3117317f581ebbbae54f1bd4932a36588267270c3c73958f03f5d44f282"
     },
     "magic-ui": {
       "source": "magicuidesign/magicui",
       "sourceType": "github",
       "skillPath": "skills/magic-ui/SKILL.md",
-      "computedHash": "751895d50c76490c6f92a68cdbe61100bd96b4963d1e91e37b5d82c8df0fc2d7"
+      "computedHash": "5536dc35318ccac02b81ed642ec0c4458a6cc8756e89bc667e1469cafe67806f"
     },
     "manim": {
       "source": "iart-ai/manim-skills",
       "sourceType": "github",
       "skillPath": "skills/manim/SKILL.md",
-      "computedHash": "77265df7e909015ebd246ab23fee008b861e1042bb53e1bfc1a6b03a18ff2bd5"
+      "computedHash": "a6ce52d4b956739c9a73b0d6b8687305e3fb06d06fdedf041a3ad2da7e99bfe7"
     },
     "map-animation": {
       "source": "iart-ai/map-animation-skills",
       "sourceType": "github",
       "skillPath": "skills/map-animation/SKILL.md",
-      "computedHash": "584fdd6a2ba764c37ce13ea384427a2edca27923fc0e982482c28265ac08ed79"
+      "computedHash": "d8911b29ae7767b4b22e1c26e007e687b06b0494c0b3a442d7c51a16107eaf14"
     },
     "marketing-council": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/marketing-council/SKILL.md",
-      "computedHash": "ac7cb3d3b358b5168adb80eea696d00b45183e9d70a8a81309b917ebc911951c"
+      "computedHash": "6c9854e272c4f387a81306d819942009bacf99641805fa11e68cab10d22bbb53"
     },
     "marketing-ideas": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/marketing-ideas/SKILL.md",
-      "computedHash": "63a1f27ff2c8ca77bf9ad8d2df4252d214d597b437c7ba2d23619248225000ad"
+      "computedHash": "1a06f2e277cbc758fce00eebffa1caf4eb62cc298c5dcfb35f0f12bd471df1c0"
     },
     "marketing-loops": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/marketing-loops/SKILL.md",
-      "computedHash": "9078625ee60316b59b97170b4b072d2036417777aca4db42cd77b6aa607d2644"
+      "computedHash": "6c959d18ade87af61841d52235019431a88951d0be9b5c7851d9bfad90afb79c"
     },
     "marketing-plan": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/marketing-plan/SKILL.md",
-      "computedHash": "f323cf8d7287981072fc1272c21d9f110f1f82b6ffdf8218273b187c23ff4e42"
+      "computedHash": "7b3c30f58809ca72fb8d5b9590fc14281742fb424d045d7c45f5f915159590ee"
     },
     "marketing-psychology": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/marketing-psychology/SKILL.md",
-      "computedHash": "50d735eb0f5c36f379ed2200f21aeacc9b9ad85667b5d33ec6111857352a1340"
+      "computedHash": "91ca552e0b03ab8ddd50e7ada7aa176de71e5f8721f8d8c5bbc21138cf6a24c6"
     },
     "media-use": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
       "skillPath": "skills/media-use/SKILL.md",
-      "computedHash": "1498b6c6a86c2c3b3b7046888035413dea6b7717ff941f14f115092433bb2a8c"
+      "computedHash": "593adcada6d01be65b7f5d5557ee3e70a0d27ea67adc03df00149b0c4d88173f"
     },
     "micro-interaction": {
       "source": "iart-ai/web-animation-skills",
       "sourceType": "github",
       "skillPath": "skills/micro-interaction/SKILL.md",
-      "computedHash": "f236bc97a9f4c0e9c9a045d0b591e3ca6b6b2aeb26e42b661c15211f652ac131"
+      "computedHash": "35fe04bed325e1f7cdbf7d25e7327f33b868b854a999eaa0d523a0899331d071"
     },
     "motion-art-direction": {
       "source": "iart-ai/motion-design-skills",
       "sourceType": "github",
       "skillPath": "skills/motion-art-direction/SKILL.md",
-      "computedHash": "bcba09b729fd3d99b3b1a388c3aaac655a3771b26dc3e8d077a110dfdd9e1631"
+      "computedHash": "4a43cd9cd57b01e77e3c76e63a4722b3c8a74277aae1d9d471a93e7fea8a7038"
     },
     "motion-background": {
       "source": "iart-ai/motion-design-skills",
       "sourceType": "github",
       "skillPath": "skills/motion-background/SKILL.md",
-      "computedHash": "99a576ac6549791b410abbc48a18074fed9e7925cf3ee5392108c59ad9e25fa4"
+      "computedHash": "73d38e3b04071caff0df7535e65344914a5952b54dad1236d6fbab262ef07dce"
     },
     "motion-graphics": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
       "skillPath": "skills/motion-graphics/SKILL.md",
-      "computedHash": "f2ecbb79ac73f817c38fc002f5bde99be4a020e8cc544f71d3817df994f26986"
+      "computedHash": "51701d75467fa4b7d70ba4038f2c0810ee247ebbea365959cea51cfd85c351ef"
     },
     "motion-pricing": {
       "source": "iart-ai/freelance-motion-skills",
       "sourceType": "github",
       "skillPath": "skills/motion-pricing/SKILL.md",
-      "computedHash": "1eb6067a1bbc39cf10b0e5a4ee05ad579de84d6ee618b0ad0d346467ce0668c4"
+      "computedHash": "2fc1e8c6f9eeed60f3352679bbd9d43f18c1f7521b5c5ebb09588e6ca64402f3"
     },
     "music-to-video": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
       "skillPath": "skills/music-to-video/SKILL.md",
-      "computedHash": "8fcdb92e400f2ec38d019352b021632054c05dc80d247963b158d60c60495f6f"
+      "computedHash": "42269a9249839da4c538a9a196f74d0b45341704c30e66fe635c320cf0758f92"
     },
     "observability-and-instrumentation": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/observability-and-instrumentation/SKILL.md",
-      "computedHash": "e5eba32f952a29d20c0383728a9505d0ca2a90f1d8d075603e53804b441b2dd2"
+      "computedHash": "71661b8e1558d7eed8cdf93bfb731da1c3afed9b895b049ecf92792af0d8a364"
     },
     "offers": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/offers/SKILL.md",
-      "computedHash": "379f31b6d19de9d329518a4bf6d1dbf538fb7c7e6c0f729e95e6d34b93e335fd"
+      "computedHash": "17490c0ab2e096eb1544afb28218a5b389534dea6937b0420593b79bea0c6daa"
     },
     "onboarding": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/onboarding/SKILL.md",
-      "computedHash": "5606ee5c3f1cde7478febf0c957bf414fb2aa919327b4906009d77ee060d1882"
+      "computedHash": "abbb198b3c73f235adf66fb0658ea7d504cd40cfcff841efb65ea5527296f24f"
     },
     "page-transition-animation": {
       "source": "iart-ai/web-animation-skills",
       "sourceType": "github",
       "skillPath": "skills/page-transition-animation/SKILL.md",
-      "computedHash": "62e103e2313433e77db26c67fdcae1c425030e1a51d0f5ffc0fb6fdac6d36132"
+      "computedHash": "23248658c4bbae44a1a11a66a350dffd2cb97a20ebca20dca9369ec63365ef78"
     },
     "particle-system": {
       "source": "iart-ai/webgl-animation-skills",
       "sourceType": "github",
       "skillPath": "skills/particle-system/SKILL.md",
-      "computedHash": "33e9c87a68ed4591c265cf2b88409ddd7026c7ca9ca3dbdc72113ac5144b5761"
+      "computedHash": "e901340854fb896307236638e7333ac23c21483c6cdf79613daec658169f64b7"
     },
     "paywalls": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/paywalls/SKILL.md",
-      "computedHash": "1f0b8d15770d2e7737b818408dc5877b2eadc4cab072cdfb3529349ab059815f"
+      "computedHash": "1c285c448408388f9dc89b5ae6c30c31a930931828906c6dc12dffaf0f8405ae"
     },
     "performance-optimization": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/performance-optimization/SKILL.md",
-      "computedHash": "c88cbe0824ce94b4bc2d2d43519dc717afc529db1672388c2a5c7d695faccb8c"
+      "computedHash": "8f0d4a7a23292ffeeef9d6b841826d4df5773a11e35a6c36ffeca2644b8de4cc"
     },
     "photo-slideshow": {
       "source": "iart-ai/ecommerce-video-skills",
       "sourceType": "github",
       "skillPath": "skills/photo-slideshow/SKILL.md",
-      "computedHash": "ec1dc38355073f869c41d6eff2ae3a73323255392b31bcd99e7ff74a61044d55"
+      "computedHash": "bc93114885b95a086d802aaac85f43227a6f8e6216f382ed180db3e8e59f6b53"
     },
     "planning-and-task-breakdown": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/planning-and-task-breakdown/SKILL.md",
-      "computedHash": "0dc14a1402cdabd376f2d81d2225fcb4a18ee63d58b945ff83affeb024285b8f"
+      "computedHash": "11b51e8874c451ef4d0d18f4a56f9210310f5364cc1b176a7df1ff36014cef41"
     },
     "popups": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/popups/SKILL.md",
-      "computedHash": "95c5cb45dcbb05362168255d97ee68d53a5916d8de779bd08f5f70c9b0cabd36"
+      "computedHash": "5c903bc7f47567fe5da51a081f18566222df40b9e36887c1d5932f510fcae68a"
     },
     "pr-to-video": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
       "skillPath": "skills/pr-to-video/SKILL.md",
-      "computedHash": "2144a8cd1f8ff1efdf8895eee2d99d02c0a1b01985e0941e40314f82648f8573"
+      "computedHash": "32b0e1204a79c460ea2d8117c952591f0b2393ba4fb1b6007ede724658edd2dc"
     },
     "presentation-video": {
       "source": "iart-ai/data-animation-skills",
       "sourceType": "github",
       "skillPath": "skills/presentation-video/SKILL.md",
-      "computedHash": "97e081c072be7e66c0e7d05f96e213fe440cb2a9f19976f31ac4db5539b6c078"
+      "computedHash": "52eec9811ecea03a77026da27d1ec873ee702a4e54116d845cac26d473a1fbb4"
     },
     "pricing": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/pricing/SKILL.md",
-      "computedHash": "6fbe2646324fb367e6b854f91de063996485c0b4ef4b98e7ca8b21629e3e967b"
+      "computedHash": "2e6af53bac2c83d6338c2243e276b5bb04585e30a6e8e67efcbba3f8e5506e86"
     },
     "product-launch-video": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
       "skillPath": "skills/product-launch-video/SKILL.md",
-      "computedHash": "c5d95afc26de07fe10e59d753eef66e804bcbc5a4e54759bf4d2057023c5b77a"
+      "computedHash": "cbdd3a5314a2599b872a9a7fb96584b1dfa0b4dddb1255b27dcf3b4981a0966d"
     },
     "product-marketing": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/product-marketing/SKILL.md",
-      "computedHash": "b8a9cd747705923a7a29cda12e478594e3a5062d8f7c7bfbf19d7fc0b24cee76"
+      "computedHash": "729ebdd17ef5c1754137974377b21aa83b8f53869db76c0e3497ddab92d80a18"
     },
     "programmatic-seo": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/programmatic-seo/SKILL.md",
-      "computedHash": "e40eee11a367397e56e304fd646d582e276751ffd6f7275c64ea74b046cf5c22"
+      "computedHash": "fea410aa3dde3622e810f323aa6cc52092c8e63e2cade71400b256f3d91572af"
     },
     "promo-video": {
       "source": "iart-ai/ecommerce-video-skills",
       "sourceType": "github",
       "skillPath": "skills/promo-video/SKILL.md",
-      "computedHash": "c36e454e50ace08d7bb5189ab325af57721c2ecb3f32deddd87afb9f5e704c3d"
+      "computedHash": "ebbdaf6a9b36db8f5a17df3f3b1129d5c5038a6838ee7269afedf0c2e1a4d8ff"
     },
     "prospecting": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/prospecting/SKILL.md",
-      "computedHash": "6e53e93c68e6f1b19f79549ca504ee69dded349337d36a935297b95aca257052"
+      "computedHash": "e432bfebc913f44a1c3bc55b0dd7ebad37475a4d33a0c3a7210415521962c908"
     },
     "public-relations": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/public-relations/SKILL.md",
-      "computedHash": "88b211dfea9bb4142b0d0af3ca3fda2a46cd1c48a9d44e7f36dd5878edcb3818"
+      "computedHash": "6669f1ccc5ce906c6ff46f42d934b638a0a56fc009e2e640cfd8560a8eca7068"
     },
     "receiving-code-review": {
       "source": "obra/superpowers",
       "sourceType": "github",
       "skillPath": "skills/receiving-code-review/SKILL.md",
-      "computedHash": "59361179fc9225173e0c145ffd9bafbf9fdbf8b43ce3dc308497a0b4f83a6063"
+      "computedHash": "528d336858d6f7d22cfcb887a249409ce682cb7d37a939cb15a82f2576a35876"
     },
     "referrals": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/referrals/SKILL.md",
-      "computedHash": "2f2480c93fbf8af8b7e2ca447d7ab18ae76329d3748c0e56906fa9e24add3743"
+      "computedHash": "5206e8a69ea165d1c89e962a7267ea5a27dc3f0c60de6485ed2e1584917e12dd"
     },
     "remotion-to-hyperframes": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
       "skillPath": "skills/remotion-to-hyperframes/SKILL.md",
-      "computedHash": "17c26590575d28118b783f6a534288ac38df50fae5b95826ee9d4976328ad687"
+      "computedHash": "a8e12421e58b11a0e3f09be43b03155d44dd04387121c895d23401755c81e13e"
     },
     "remotion-video": {
       "source": "iart-ai/motion-design-skills",
       "sourceType": "github",
       "skillPath": "skills/remotion-video/SKILL.md",
-      "computedHash": "940885087443f4aa5d3baf6edb4ed25edafea2435b52922e120200b4c1af99ba"
+      "computedHash": "6ca1bfb591dcc7cf856ccec5d65750c3d6106cfebd39891ef77b650e7eb3ef98"
     },
     "requesting-code-review": {
       "source": "obra/superpowers",
       "sourceType": "github",
       "skillPath": "skills/requesting-code-review/SKILL.md",
-      "computedHash": "b095ac8c980339436b41de9989328f3f288f2e2a70452df28452bbeb6531d604"
+      "computedHash": "32bcc25e8c3315d0150f646ee0067c9d4bfbc7719c34012db9c202e17cce8a14"
     },
     "reverse-engineer-anything": {
       "source": "morluto/rea",
       "sourceType": "github",
       "skillPath": ".agents/skills/reverse-engineer-anything/SKILL.md",
-      "computedHash": "fad7ec02228015715b525cdbe1f1b5d2b9a432f01e966d88a2fc6a294d997a0e"
+      "computedHash": "4b1976539a0b5cf74f49189ffdc6f90050d2e16a8995b863c82a95b09c79e142"
     },
     "revops": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/revops/SKILL.md",
-      "computedHash": "c98322283f0f1117f976641b8e73d87605644f19eeb89095232dbabd7d5db92f"
+      "computedHash": "71b9e169a06f21f55d49392dcf61851afe33e59c6110f1889eede175a7cebfb6"
     },
     "sales-enablement": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/sales-enablement/SKILL.md",
-      "computedHash": "b1068a9769cf28f6b6bc68220ef080c44bda88b008a5975d81784ad62975c2dc"
+      "computedHash": "9f61e54fc54ebdea7def4e0c46ae3579690be73f61e6cbba81356c8119fc5688"
     },
     "schema": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/schema/SKILL.md",
-      "computedHash": "6809d198493d08931ea1c35ab40d2fca27c6ae63a07a4bc183b75df51243a374"
+      "computedHash": "6bd0cbcae837326f08e89986bcc24a36eefebb5980739b3327b1ba5198398855"
     },
     "security-and-hardening": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/security-and-hardening/SKILL.md",
-      "computedHash": "32a1243d6eb45fd342c1f4e9f9ee5f1651a1e9fdccb86dcbbbee5d6f455ed362"
+      "computedHash": "d842824db83689a0f962652fd9bc291e0516a95d0dc4a8789b48cc64b30cce59"
     },
     "security-audit": {
       "source": "cloudflare/security-audit-skill",
       "sourceType": "github",
       "skillPath": "skills/security-audit/SKILL.md",
-      "computedHash": "98b97aad2873b3b9a8e064007c25e7827b493ba27fda8bfbdb41dab586767973"
+      "computedHash": "8513eb3b2c39b8d05ef4f47b32ef4d18280b93a5efb91d8df6272f7435034af5"
     },
     "seo-audit": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/seo-audit/SKILL.md",
-      "computedHash": "928ca75d9899be7d17d7cbfa21aee28cc2e66681b2f4e19e6c9bd2a8330daa24"
+      "computedHash": "225caa84fe9e47ee23eb94ce6e1202a3dac203dd7ccb30b7b8fdf7675833d75a"
     },
     "shader-glsl": {
       "source": "iart-ai/webgl-animation-skills",
       "sourceType": "github",
       "skillPath": "skills/shader-glsl/SKILL.md",
-      "computedHash": "09eb08ac1e1a6fe69260fb70d0880adc1ebc62faf7aa304c5c8a49dc43ebfb91"
+      "computedHash": "916275255903d5b259a36ef5d71ba010629e37d61325c0cc52b8e2d462c9ef92"
     },
     "shipping-and-launch": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/shipping-and-launch/SKILL.md",
-      "computedHash": "85afde7a62dac2d9abeef806f93a6920d11b4396bc637685a02f1637086c8aab"
+      "computedHash": "fe2c58f8d74d7c398859d1e67edd7820fa7d5b156a9a250eedc11231f87a3753"
     },
     "short-form-video": {
       "source": "iart-ai/tiktok-video-skills",
       "sourceType": "github",
       "skillPath": "skills/short-form-video/SKILL.md",
-      "computedHash": "893ea19615f3199159b9fe94f05e37a5e538e7e0c3af7f77f9f9bed7ff933423"
+      "computedHash": "f55f26c6bb88e7391044300c8db24e732a7ba3e4f632b392201526fdf7a87e86"
     },
     "shot-composition": {
       "source": "iart-ai/motion-design-skills",
       "sourceType": "github",
       "skillPath": "skills/shot-composition/SKILL.md",
-      "computedHash": "9ff4551d175f951fb443a0680020871eb93c5ae07a0f36a2008ca98e5d0fa324"
+      "computedHash": "a2d2e603a077f879bcaacd696e5cef5a4b62b1f0fc4d21ecf5e446466b7bfdb4"
     },
     "signup": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/signup/SKILL.md",
-      "computedHash": "1b0c42d304bfaa7759fb0bdbe4041ed66305cdf5c3a98859ce0855fca02f5a5f"
+      "computedHash": "dcd7eed79c8a11b20a4dd381ae09ae8146b2f2c6c6e2603799007fdb33b6fcb3"
     },
     "site-architecture": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/site-architecture/SKILL.md",
-      "computedHash": "20ea864cae2d3261fd233dd5175d8aa0b806857447083c175ed9250066efff90"
+      "computedHash": "d4dfc660e46d96fff61bb9899a0c724b36a4ec153f66c1883276c9c39bb505fb"
     },
     "skill-inspector": {
       "source": "NVIDIA/SkillSpector",
       "sourceType": "github",
       "skillPath": "skills/skill-inspector/SKILL.md",
-      "computedHash": "7ee4fd8df9f38aa5345b7145e0ac795c28724aab2440c461f35fbc853bbad0dc"
+      "computedHash": "5056fb112425b322e3fddbf6572c1c3d23650a1a9025515eabe865f16f865bd9"
     },
     "slideshow": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
       "skillPath": "skills/slideshow/SKILL.md",
-      "computedHash": "fa178947b4cfe834d416c4d826d50cdd1f92dfb22395569032a40aa5d26819cc"
+      "computedHash": "d2b37c440554a7964e3fff8cf7544e337cc87953b2b45d23c290140a26e6007a"
     },
     "sms": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/sms/SKILL.md",
-      "computedHash": "1a49d8a2326f945a3a88fa09e7aeb9049a40a457f3c12629c0278bf4ffe6ce95"
+      "computedHash": "782ad33c3dbf3599778081c3f673247140f929aecbc00bd9791a522b121b7fcd"
     },
     "social": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/social/SKILL.md",
-      "computedHash": "665681c9f0815617bcfedd5b3334404acebfe2b3dfececc67300e276c0cdcd18"
+      "computedHash": "103e8d0611e7057b958b115496532d402ffd9a7ddc1cf161862a4cbc2190594a"
     },
     "soundtrack": {
       "source": "iart-ai/javascript-animation-skills",
       "sourceType": "github",
       "skillPath": "skills/soundtrack/SKILL.md",
-      "computedHash": "f61f31dba833b00dac585801b12ed0deb6623b6c1d3aa5dbb924db5f58528261"
+      "computedHash": "e4e45a3dbd48f597ae348dbc5b1c21029d75dd9f0bf684055adb29a340717bb8"
     },
     "source-driven-development": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/source-driven-development/SKILL.md",
-      "computedHash": "d1923bb807f7db157a794f07a590ca639b3789b2f1a5eabef993f8df24791e2a"
+      "computedHash": "d42621fac185da1053a4a44bd967ea5783760637962c7bc77f57494479bcdabc"
     },
     "spec-driven-development": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/spec-driven-development/SKILL.md",
-      "computedHash": "90a53ee823e49fd1518a01e6cf64968d4848bce3fc0b0115b1c19b7e5a87a5ca"
+      "computedHash": "8ee02eca7b4c80150a0f0dea28faa8ad1d27eb677744901e06ef938ca7414e77"
     },
     "strategic-compact": {
       "source": "WorldFlowAI/everything-claude-code",
       "sourceType": "github",
       "skillPath": "skills/strategic-compact/SKILL.md",
-      "computedHash": "f31725d9612483098fb37e2de3d695aa79c6d203985668f8d4f1aef32d6f2864"
+      "computedHash": "03347b8143dc73f6ab23f13d6f708f0c11ce3bb6954a7f79c9871c891db09177"
     },
     "subagent-driven-development": {
       "source": "obra/superpowers",
       "sourceType": "github",
       "skillPath": "skills/subagent-driven-development/SKILL.md",
-      "computedHash": "71259c008c49ff734e64c61045f1aa235b9aa99642a9aca9398beb775f6c59c5"
+      "computedHash": "429ace4d1fa2ce5a371b42de478743b60e6f5132d8ee22b0e888e839ee5eeefe"
     },
     "svg-animation": {
       "source": "iart-ai/web-animation-skills",
       "sourceType": "github",
       "skillPath": "skills/svg-animation/SKILL.md",
-      "computedHash": "b6902577f093a1cd724052b94e633154cb42020b5001138185982fb4ce230404"
+      "computedHash": "cfcf1a801009db1ee4d5141c749acbf6c5eff23534610c4ac3c87c16580809df"
     },
     "systematic-debugging": {
       "source": "obra/superpowers",
       "sourceType": "github",
       "skillPath": "skills/systematic-debugging/SKILL.md",
-      "computedHash": "276fb0aadb002ab930cc2a56de89e16995a2e3e70b33587652bf0a5fb123148d"
+      "computedHash": "ceb6a7a4cb02402360846cd466df67a8c6eaa3c5b1e97d1b419b5ba2ceeb734c"
     },
     "talking-head-b-roll": {
       "source": "iart-ai/b-roll-skills",
       "sourceType": "github",
       "skillPath": "skills/talking-head-b-roll/SKILL.md",
-      "computedHash": "cdd511056350a5888ebcfa470e0f0e1e14f14b85f0ff1855bfb6824644328f3f"
+      "computedHash": "6eba23c4ccaca57f373d97cbbfcfbef9ec12f5fb2c1e4511b7144855ea64f45e"
     },
     "talking-head-recut": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
       "skillPath": "skills/talking-head-recut/SKILL.md",
-      "computedHash": "83df91f488236abbc53d3c817f31b4554de8e772c2e8a17a15c0a72664da9eca"
+      "computedHash": "f2b867bfffaa1a7b0e50bd1da1f205fed9e2c0c1a9b1ab983127a057b47ba046"
     },
     "tdd-workflow": {
       "source": "WorldFlowAI/everything-claude-code",
       "sourceType": "github",
       "skillPath": "skills/tdd-workflow/SKILL.md",
-      "computedHash": "fc3274947bea3a5b18a505aeaf06aebc5d6ad459b767e850a2d810d3339577bf"
+      "computedHash": "9d0b7d651e8530f6159f2b93ac9e714c4b42a8bdc04465e475d11caeb048f164"
     },
     "test-driven-development": {
       "source": "obra/superpowers",
       "sourceType": "github",
       "skillPath": "skills/test-driven-development/SKILL.md",
-      "computedHash": "3cfe4ebb6fa7288f668d87880d279c8e48f7a92b63415e296857060f5ce22e05"
+      "computedHash": "2782702b2cf69ace085ed30d067b6f8bfd2d777ad51770fc5bdae9cb5c1b5c04"
     },
     "testimonial-video": {
       "source": "iart-ai/ad-video-skills",
       "sourceType": "github",
       "skillPath": "skills/testimonial-video/SKILL.md",
-      "computedHash": "0d71fa501ffc13fc979d4d93865785c16741c6b4041ccbb3926eaf0da0f486da"
+      "computedHash": "ff757c49207a53c3a1eec8d16a8d8ae70ae9e291183c100a606bff78ddead4ba"
     },
     "text-message-animation": {
       "source": "iart-ai/text-message-video-skills",
       "sourceType": "github",
       "skillPath": "skills/text-message-animation/SKILL.md",
-      "computedHash": "753d105c3d28eb1f6fda181de099f7c57f9c2f7449cea1878db184b66783a899"
+      "computedHash": "cb616d29852d333b7944c704cf0e6cc6f001ccf89d8c0acc462f8055a71c633c"
     },
     "threejs-animation": {
       "source": "iart-ai/webgl-animation-skills",
       "sourceType": "github",
       "skillPath": "skills/threejs-animation/SKILL.md",
-      "computedHash": "fc7bf12130f2996a2ab79c17b71381cc5f72581d4b46cc9663927c83b70ffe0e"
+      "computedHash": "0ba8eea2da421691a047a1a3e4b4d328f513e5a7685edd3da7674b69895afc78"
+    },
+    "trader-alerts": {
+      "source": "Jakeschincariol/day-trader-skill",
+      "sourceType": "github",
+      "skillPath": "trader-alerts/SKILL.md",
+      "computedHash": "73e47347042a8f716ed33f67d59f79ab095438c84425a39c9c2a7d40aa99a291"
+    },
+    "trader-analyst": {
+      "source": "Jakeschincariol/day-trader-skill",
+      "sourceType": "github",
+      "skillPath": "trader-analyst/SKILL.md",
+      "computedHash": "fc8bea8873b921538c278bcef8369eb36d4b4353a0efb868dbd955f4944a4dec"
+    },
+    "trader-broker": {
+      "source": "Jakeschincariol/day-trader-skill",
+      "sourceType": "github",
+      "skillPath": "trader-broker/SKILL.md",
+      "computedHash": "70cfa7fad0139411679a54749c1404854d08f49bda50912b24d55d1477e0981f"
+    },
+    "trader-budget": {
+      "source": "Jakeschincariol/day-trader-skill",
+      "sourceType": "github",
+      "skillPath": "trader-budget/SKILL.md",
+      "computedHash": "d9ab917dc235a45e9591daffc4b7e2baec20ec53fc7595d2168b8a0ab21902f7"
+    },
+    "trader-entry": {
+      "source": "Jakeschincariol/day-trader-skill",
+      "sourceType": "github",
+      "skillPath": "trader-entry/SKILL.md",
+      "computedHash": "df7f61f739158509f543b5f45e8740363a138276d44e3d41be8bffbf4479629a"
+    },
+    "trader-exit": {
+      "source": "Jakeschincariol/day-trader-skill",
+      "sourceType": "github",
+      "skillPath": "trader-exit/SKILL.md",
+      "computedHash": "9abe9bb672405dd95887ce4ba3a103e8029f063cb05c4e687eb289a03bda5508"
+    },
+    "trader-news": {
+      "source": "Jakeschincariol/day-trader-skill",
+      "sourceType": "github",
+      "skillPath": "trader-news/SKILL.md",
+      "computedHash": "4a8bf78d9f731cc50c33ec85518a336059a88fdcf1f796f548112f37713cae22"
+    },
+    "trader-pelosi": {
+      "source": "Jakeschincariol/day-trader-skill",
+      "sourceType": "github",
+      "skillPath": "trader-pelosi/SKILL.md",
+      "computedHash": "83871cd7cfd1b8d6ddb8a70156791a047443181fba6c13b2861ed2a0c443e894"
+    },
+    "trader-risk": {
+      "source": "Jakeschincariol/day-trader-skill",
+      "sourceType": "github",
+      "skillPath": "trader-risk/SKILL.md",
+      "computedHash": "7cb32b5c1fb5cfd4c2208385c0bd726599db87afe243511921e8360afe23d20d"
+    },
+    "trader-scanner": {
+      "source": "Jakeschincariol/day-trader-skill",
+      "sourceType": "github",
+      "skillPath": "trader-scanner/SKILL.md",
+      "computedHash": "544126ae87853ae035587156dbf912d8146bd1cfc23ceb107aa232229c26540b"
+    },
+    "trader-timemachine": {
+      "source": "Jakeschincariol/day-trader-skill",
+      "sourceType": "github",
+      "skillPath": "trader-timemachine/SKILL.md",
+      "computedHash": "19eca0ec94a78e2ee29e9ddf9185330269f4b9f1eaa8c0c74e8f19466cf8dc7d"
     },
     "using-agent-skills": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/using-agent-skills/SKILL.md",
-      "computedHash": "4221dc84c943696829025a42c7961b257afdb8f1ba20af42463434a0d9c03812"
+      "computedHash": "64ee1ea9d458df9cd5cdbf40dd0961a0322d9be6b85e45f9de8abae65b4fe7b1"
     },
     "using-git-worktrees": {
       "source": "obra/superpowers",
       "sourceType": "github",
       "skillPath": "skills/using-git-worktrees/SKILL.md",
-      "computedHash": "48c8a1040e378e0cb7208107294e3afa9067b9370c3f33b49a443eb6b7528b0d"
+      "computedHash": "b69324cb5e5ba5b846fc2ae2811616008dc6f19858245100e472713190d4c9e4"
     },
     "using-superpowers": {
       "source": "obra/superpowers",
       "sourceType": "github",
       "skillPath": "skills/using-superpowers/SKILL.md",
-      "computedHash": "ef8670c2a2d8e2f6ed52d6f3219759903300ca13afc5ec2e25826a735112562b"
+      "computedHash": "6a9104fac7e16c3cec2bc118943aefd331cac35b4cfabd427cea4dc16337c6a5"
     },
     "verification-before-completion": {
       "source": "obra/superpowers",
       "sourceType": "github",
       "skillPath": "skills/verification-before-completion/SKILL.md",
-      "computedHash": "b529822bdac4b197b180fe12225cff86b930b65910435103c10622df7f041651"
+      "computedHash": "09b0e3a4689c1c38a3b8fc6ef57a1d4165aa33c0013d546dbde9dd348941a319"
     },
     "video": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "skillPath": "skills/video/SKILL.md",
-      "computedHash": "9755cc816fc5c05e382fb551d76158060fd89ee2b3105a73d2c8165e3e6bd9e1"
+      "computedHash": "334de72ea5eac19304e129463294928a13d6433c02da834ac5427ba204a93ba9"
     },
     "video-delivery-specs": {
       "source": "iart-ai/freelance-motion-skills",
       "sourceType": "github",
       "skillPath": "skills/video-delivery-specs/SKILL.md",
-      "computedHash": "f71afa0e1e95d06a50b13612eb444f8e7532a260cb591ff4c58714a3ea6bfda9"
+      "computedHash": "a9b960c499f38d1fdff62d82c705cc9e0fb4558cbe56cc600e534f851e300577"
     },
     "whiteboard-animation": {
       "source": "iart-ai/explainer-video-skills",
       "sourceType": "github",
       "skillPath": "skills/whiteboard-animation/SKILL.md",
-      "computedHash": "156ea47bbc08e224e42b9e7ea6a35db1a7e08f36294b862eedded3cee8f84d0c"
+      "computedHash": "f6e158606e6abe73ef173c02b48b603203a3f87123b346b2596dcfe2ee18575c"
     },
     "wrapped-video": {
       "source": "iart-ai/explainer-video-skills",
       "sourceType": "github",
       "skillPath": "skills/wrapped-video/SKILL.md",
-      "computedHash": "8d658c92da44ea452f2b26318ad9f4f24bbda3462719e011edcbbc8f4a4b5641"
+      "computedHash": "4dfa280fe1a0846abc0ed5d1583031e2e78d1e0fc1788702d5ff043dcb486919"
     },
     "writing-plans": {
       "source": "obra/superpowers",
       "sourceType": "github",
       "skillPath": "skills/writing-plans/SKILL.md",
-      "computedHash": "c2647b5bf067be353a893e5a39a632cbbeb7ad81e61fa5ae227ece5490029073"
+      "computedHash": "ef082ddb5354d736059397133b3682e8a0c85c57906affe47c9da354cbb7c91e"
     },
     "writing-skills": {
       "source": "obra/superpowers",
       "sourceType": "github",
       "skillPath": "skills/writing-skills/SKILL.md",
-      "computedHash": "f06bbb471439736c838e89a57a2a371bcc687931ba878901d97373194e212ea9"
+      "computedHash": "52cdfda22598fcdb50374e7ef51fc8c1122dd1a36aa609a437b2662d500104e8"
     },
     "youtube-intro-outro": {
       "source": "iart-ai/youtube-video-skills",
       "sourceType": "github",
       "skillPath": "skills/youtube-intro-outro/SKILL.md",
-      "computedHash": "048d7190bcd6ec26f8700328ee3b59c1d56856e4e5fe9a3b85c7e12e15e3a9fa"
+      "computedHash": "213a6f4c96c1ac4fcb9f1ad04777b9488aac560b6c13de67b0b4521e5fe79c69"
     }
   }
 }
