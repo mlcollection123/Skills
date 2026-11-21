@@ -1105,6 +1105,13 @@
       "skillPath": "trader-timemachine/SKILL.md",
       "computedHash": "19eca0ec94a78e2ee29e9ddf9185330269f4b9f1eaa8c0c74e8f19466cf8dc7d"
     },
+    "unslop": {
+      "source": "heydamir/unslop",
+      "commit": "620163eedb3529d9cd23a3994ed8d287d06f760d",
+      "sourceType": "github",
+      "skillPath": "skills/unslop/SKILL.md",
+      "computedHash": "34b16270083f9892424a0b41dec4d5f25a73709c9cffa7702e57c723000e6df5"
+    },
     "using-agent-skills": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
